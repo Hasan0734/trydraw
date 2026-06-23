@@ -1,16 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import Whiteboard from "#/components/Whiteboard";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: App,
-})
+});
 
 function App() {
-
   return (
-    <>
-      <main>
-        
-      </main>
-    </>
-  )
+    <main>
+      <Whiteboard />
+    </main>
+  );
 }

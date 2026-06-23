@@ -32,7 +32,7 @@ function applyThemeMode(mode: ThemeMode) {
 }
 
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>('auto')
+  const [mode, setMode] = useState<ThemeMode>('dark')
 
   useEffect(() => {
     const initialMode = getInitialMode()
@@ -46,7 +46,7 @@ export default function ThemeToggle() {
     }
 
     const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyThemeMode('auto')
+    const onChange = () => applyThemeMode('dark')
 
     media.addEventListener('change', onChange)
     return () => {
@@ -59,7 +59,7 @@ export default function ThemeToggle() {
       mode === 'light' ? 'dark' : mode === 'dark' ? 'auto' : 'light'
     setMode(nextMode)
     applyThemeMode(nextMode)
-    window.localStorage.setItem('theme', nextMode)
+    window.localStorage.setItem('theme', "dark")
   }
 
   const label =
