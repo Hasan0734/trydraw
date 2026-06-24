@@ -9,7 +9,7 @@ import {
   Type,
 } from "lucide-react";
 import { GeoShapeGeoStyle, useEditor, useValue } from "tldraw";
-import { Button } from "./ui/button";
+import CommonButton from "./CommonButton";
 
 const LeftSidebar = () => {
   const editor = useEditor();
@@ -41,72 +41,74 @@ const LeftSidebar = () => {
   };
 
   return (
-    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-1000 flex flex-col gap-2 bg-card p-2 rounded-2xl shadow-xl border">
-      <Button
-        variant={currentToolId === "select" ? "secondary" : "ghost"}
+    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-1000 flex flex-col gap-1 bg-card p-1 rounded-xl shadow-xl border">
+      <CommonButton
+        active={currentToolId === "select"}
         onClick={() => editor.setCurrentTool("select")}
-        size={"icon"}
+        side={"right"}
+        tooltipContent="Select -- S"
       >
         <MousePointer2 />
-      </Button>
+      </CommonButton>
 
-      <Button
-        variant={
-          currentToolId === "geo" && currentGeoStyle === "rectangle"
-            ? "secondary"
-            : "ghost"
-        }
+      <CommonButton
+        active={currentToolId === "geo" && currentGeoStyle === "rectangle"}
         onClick={selectRectangle}
-        size={"icon"}
+        side={"right"}
+        tooltipContent="Rectangle -- E"
       >
         <Square />
-      </Button>
-      <Button
-        variant={
-          currentToolId === "geo" && currentGeoStyle === "ellipse"
-            ? "secondary"
-            : "ghost"
-        }
+      </CommonButton>
+      <CommonButton
+        active={currentToolId === "geo" && currentGeoStyle === "ellipse"}
         onClick={selectEllipse}
-        size={"icon"}
+        side={"right"}
+        tooltipContent="Ellipse -- E"
       >
         <Circle />
-      </Button>
-      <Button
-        variant={currentToolId === "arrow" ? "secondary" : "ghost"}
+      </CommonButton>
+      <CommonButton
+        active={currentToolId === "arrow"}
         onClick={() => editor.setCurrentTool("arrow")}
-        size={"icon"}
+        side="right"
+        tooltipContent="Arrow -- A"
       >
         <MoveUpRight />
-      </Button>
-      <Button
-        variant={currentToolId === "line" ? "secondary" : "ghost"}
+      </CommonButton>
+      <CommonButton
+        active={currentToolId === "line"}
         onClick={() => editor.setCurrentTool("line")}
-        size={"icon"}
+        tooltipContent="Line -- L"
+        side="right"
       >
         <Slash />
-      </Button>
-      <Button
-        variant={currentToolId === "draw" ? "secondary" : "ghost"}
+      </CommonButton>
+      <CommonButton
+        tooltipContent="Draw -- D"
+        active={currentToolId === "draw"}
         onClick={() => editor.setCurrentTool("draw")}
-        size={"icon"}
+        side="right"
       >
         <Pen />
-      </Button>
-      <Button
-        variant={currentToolId === "text" ? "secondary" : "ghost"}
+      </CommonButton>
+
+      <CommonButton
         onClick={() => editor.setCurrentTool("text")}
-        size={"icon"}
+        tooltipContent="Text -- N"
+        active={currentToolId === "text"}
+        side="right"
       >
         <Type />
-      </Button>
-      <Button
-        variant={currentToolId === "note" ? "secondary" : "ghost"}
+      </CommonButton>
+
+      <CommonButton
         onClick={() => editor.setCurrentTool("note")}
-        size={"icon"}
+        tooltipContent="Note -- N"
+        active={currentToolId === "note"}
+        side="right"
       >
         <StickyNote />
-      </Button>
+      </CommonButton>
     </div>
   );
 };
