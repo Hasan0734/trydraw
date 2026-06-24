@@ -1,5 +1,5 @@
 import { PopoverContent } from "./ui/popover";
-import { useEditor } from "tldraw";
+import { GeoShapeGeoStyle, useEditor, useValue } from "tldraw";
 import {
   ArrowBigDown,
   ArrowBigLeft,
@@ -20,98 +20,96 @@ import {
   Triangle,
 } from "lucide-react";
 import CommonButton from "./CommonButton";
-import type { GeoShapeGeoStyle } from "#/lib/type";
+import type { GeoShapeGeoStyle as GeoShapeType } from "#/lib/type";
 
 const shapes = [
   {
-    name: "Shape -- Rectangle",
+    name: "Rectangle",
     icon: Square,
     type: "rectangle",
   },
   {
-    name: "Shape -- Ellipse",
+    name: "Ellipse",
     icon: Circle,
     type: "ellipse",
   },
   {
-    name: "Shape -- Triangle",
+    name: "Triangle",
     icon: Triangle,
     type: "triangle",
   },
   {
-    name: "Shape -- Diamond",
+    name: "Diamond",
     icon: Diamond,
     type: "diamond",
   },
   {
-    name: "Shape -- Star",
+    name: "Star",
     icon: Star,
     type: "star",
   },
   {
-    name: "Shape -- Pentagon",
+    name: "Pentagon",
     icon: Pentagon,
     type: "pentagon",
   },
   {
-    name: "Shape -- Hexagon",
+    name: "Hexagon",
     icon: Hexagon,
     type: "hexagon",
   },
   {
-    name: "Shape -- Octagon",
+    name: "Octagon",
     icon: Octagon,
     type: "octagon",
   },
   {
-    name: "Shape -- Arrow left",
+    name: "Arrow left",
     icon: ArrowBigLeft,
     type: "arrow-left",
   },
   {
-    name: "Shape -- Arrow up",
+    name: "Arrow up",
     icon: ArrowBigUp,
     type: "arrow-up",
   },
   {
-    name: "Shape -- Arrow down",
+    name: "Arrow down",
     icon: ArrowBigDown,
     type: "arrow-down",
   },
   {
-    name: "Shape -- Arrow right",
+    name: "Arrow right",
     icon: ArrowBigRight,
     type: "arrow-right",
   },
   {
-    name: "Shape -- Cloud",
+    name: "Cloud",
     icon: Cloud,
     type: "cloud",
   },
   {
-    name: "Shape -- X box",
+    name: "X box",
     icon: SquareX,
     type: "x-box",
   },
   {
-    name: "Shape -- Check box",
+    name: "Check box",
     icon: SquareCheck,
     type: "check-box",
   },
   {
-    name: "Shape -- Heart",
+    name: "Heart",
     icon: Heart,
     type: "heart",
   },
 ];
 const ShapeSelector = () => {
   const editor = useEditor();
-  //   const shape = useValue("shape", () => editor.getOnlySelectedShape(), [
-  //     editor,
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
 
-  //   ]);
-
-  const selectedShape = editor.getOnlySelectedShape();
 
   return (
     <PopoverContent className="max-w-37 p-1">
@@ -121,19 +119,24 @@ const ShapeSelector = () => {
           const isActive = shape.type === selectedShape?.props?.geo;
           return (
             <CommonButton
+              key={shape.name}
               onClick={() => {
-                if (!selectedShape) return;
+                if (!selectedShape) {
+                  editor.setStyleForNextShapes(GeoShapeGeoStyle, shape.type);
+                  editor.setCurrentTool("geo");
+                  return;
+                }
 
                 editor.updateShape({
-                  id: selectedShape.id, 
-                  type: "geo", 
+                  id: selectedShape.id,
+                  type: "geo",
                   props: {
-                    geo: shape.type as GeoShapeGeoStyle,
+                    geo: shape.type as GeoShapeType,
                   },
                 });
               }}
               active={isActive}
-              tooltipContent={shape.name}
+              tooltipContent={`Shape ─ ${shape.name}`}
             >
               <shape.icon />
             </CommonButton>

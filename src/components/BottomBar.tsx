@@ -24,21 +24,24 @@ const BottomBar = () => {
 
   const currentToolId = useValue(
     "currentToolId",
-    () => editor.getOnlySelectedShapeId(),
+    () => editor.getCurrentToolId(),
     [editor],
   );
 
-  const shape = useValue("shape", () => editor.getOnlySelectedShape(), [
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
     editor,
   ]);
 
   const PARENT_CLASS =
     "absolute bottom-4 left-1/2 -translate-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
 
+  console.log(selectedShape);
+
+  console.log(currentToolId, selectedShape?.typeName)
   return (
     <>
       <AnimatePresence initial={false}>
-        {shape?.type === "geo" && (
+        {(currentToolId === "geo" || selectedShape?.typeName === "shape") && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -50,7 +53,7 @@ const BottomBar = () => {
         )}
       </AnimatePresence>
       <AnimatePresence initial={false}>
-        {shape?.type === "text" && (
+        {selectedShape?.type === "text" && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

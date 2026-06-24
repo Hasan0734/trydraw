@@ -4,7 +4,7 @@ import TooltipWrapper from "./TooltipWrapper";
 interface CommonButtonProps {
   active?: boolean;
   tooltipContent?: string;
-  onClick: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
   side?: "left" | "right" | "top" | "bottom";
 }
