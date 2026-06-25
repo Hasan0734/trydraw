@@ -58,7 +58,7 @@ const ShapeFonts = () => {
             active={isActive}
           >
             <div
-              className="bg-white size-4 "
+              className="bg-foreground size-4 "
               style={{
                 mask: `url(/assets/merged.svg#${font.svg}) center 100% / 100% no-repeat`,
               }}

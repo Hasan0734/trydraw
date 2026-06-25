@@ -59,7 +59,7 @@ const ShapeOutline = () => {
             onClick={() => handleOutline(outline.value as ShapeDash)}
           >
             <div
-              className="bg-white size-4 "
+              className="bg-foreground size-4 "
               style={{
                 mask: `url(/assets/merged.svg#${outline.svg}) center 100% / 100% no-repeat`,
               }}

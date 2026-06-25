@@ -39,10 +39,12 @@ const BottomBar = () => {
   console.log(selectedShape);
 
   console.log(currentToolId, selectedShape?.typeName);
+  const access = ["arrow", "line", "geo"];
   return (
     <>
       <AnimatePresence initial={false}>
-        {(currentToolId === "geo" || selectedShape?.typeName === "shape") && (
+        {(access.includes(currentToolId) ||
+          selectedShape?.typeName === "shape") && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

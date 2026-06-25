@@ -87,7 +87,7 @@ const ShapeTextAlign = () => {
                   tooltipContent={`${vertical.title}`}
                 >
                   <div
-                    className="bg-white size-4 "
+                    className="bg-foreground size-4 "
                     style={{
                       mask: `url(/assets/merged.svg#${vertical.svg}) center 100% / 100% no-repeat`,
                     }}
@@ -110,7 +110,7 @@ const ShapeTextAlign = () => {
               active={isActive}
             >
               <div
-                className="bg-white size-4 "
+                className="bg-foreground size-4 "
                 style={{
                   mask: `url(/assets/merged.svg#${align.svg}) center 100% / 100% no-repeat`,
                 }}

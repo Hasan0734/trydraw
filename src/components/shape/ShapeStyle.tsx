@@ -1,22 +1,73 @@
 import CommonButton from "../CommonButton";
-import { Shapes, PaintBucket } from "lucide-react";
+import { Shapes, PaintBucket, Slash } from "lucide-react";
 import { Popover, PopoverTrigger } from "../ui/popover";
 import ShapeSelector from "./ShapeSelector";
 import ColorPopover from "./ColorPopover";
 import StrokePopover from "./StrokePopover";
+import { useEditor, useValue } from "tldraw";
+import SplinePopoverContent from "./spline/SplinePopoverContent";
+import LinePopoverContent from "./line/LinePopoverContent";
+import ArrowPopoverContent from "./line/ArrowPopoverContent";
+import LinePopover from "./line/LinePopoverContent";
 
 const ShapeStyle = () => {
+  const editor = useEditor();
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
+
+  const currentToolId = useValue(
+    "currentToolId",
+    () => editor.getCurrentToolId(),
+    [editor],
+  );
+
+  console.log(selectedShape, currentToolId);
 
   return (
     <>
-      <Popover>
-        <PopoverTrigger>
-          <CommonButton tooltipContent="Shape">
-            <Shapes />
-          </CommonButton>
-        </PopoverTrigger>
-        <ShapeSelector />
-      </Popover>
+      {(selectedShape?.type === "geo" || currentToolId === "geo") && (
+        <Popover>
+          <PopoverTrigger>
+            <CommonButton tooltipContent="Shape">
+              <Shapes />
+            </CommonButton>
+          </PopoverTrigger>
+          <ShapeSelector />
+        </Popover>
+      )}
+
+      {(currentToolId === "arrow" || selectedShape?.type === "arrow") && (
+        <>
+          <Popover>
+            <PopoverTrigger>
+              <CommonButton tooltipContent="Spline ─ Cubic">
+                <span
+                  className="bg-white size-4 "
+                  style={{
+                    mask: `url(/assets/merged.svg#spline-cubic) center 100% / 100% no-repeat`,
+                  }}
+                ></span>
+              </CommonButton>
+            </PopoverTrigger>
+            <SplinePopoverContent />
+          </Popover>
+          <LinePopover />
+          <Popover>
+            <PopoverTrigger>
+              <CommonButton tooltipContent="Arrow ─ Arc">
+                <span
+                  className="bg-white size-4 "
+                  style={{
+                    mask: `url(/assets/merged.svg#arrowhead-none) center 100% / 100% no-repeat`,
+                  }}
+                ></span>
+              </CommonButton>
+            </PopoverTrigger>
+            <ArrowPopoverContent />
+          </Popover>
+        </>
+      )}
 
       <Popover>
         <PopoverTrigger>
@@ -56,17 +107,3 @@ const ShapeStyle = () => {
 };
 
 export default ShapeStyle;
-
-// black: TLDefaultColor;
-// grey: TLDefaultColor;
-// 'light-violet': TLDefaultColor;
-// violet: TLDefaultColor;
-// blue: TLDefaultColor;
-// 'light-blue': TLDefaultColor;
-// yellow: TLDefaultColor;
-// orange: TLDefaultColor;
-// green: TLDefaultColor;
-// 'light-green': TLDefaultColor;
-// 'light-red': TLDefaultColor;
-// red: TLDefaultColor;
-// white: TLDefaultColor;

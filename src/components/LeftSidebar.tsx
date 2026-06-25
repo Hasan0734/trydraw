@@ -46,7 +46,7 @@ const LeftSidebar = () => {
         active={currentToolId === "select"}
         onClick={() => editor.setCurrentTool("select")}
         side={"right"}
-        tooltipContent="Select -- S"
+        tooltipContent="Select ─ S"
       >
         <MousePointer2 />
       </CommonButton>
@@ -55,7 +55,7 @@ const LeftSidebar = () => {
         active={currentToolId === "geo" && currentGeoStyle === "rectangle"}
         onClick={selectRectangle}
         side={"right"}
-        tooltipContent="Rectangle -- E"
+        tooltipContent="Rectangle ─ E"
       >
         <Square />
       </CommonButton>
@@ -63,7 +63,7 @@ const LeftSidebar = () => {
         active={currentToolId === "geo" && currentGeoStyle === "ellipse"}
         onClick={selectEllipse}
         side={"right"}
-        tooltipContent="Ellipse -- E"
+        tooltipContent="Ellipse ─ E"
       >
         <Circle />
       </CommonButton>
@@ -71,20 +71,20 @@ const LeftSidebar = () => {
         active={currentToolId === "arrow"}
         onClick={() => editor.setCurrentTool("arrow")}
         side="right"
-        tooltipContent="Arrow -- A"
+        tooltipContent="Arrow ─ A"
       >
         <MoveUpRight />
       </CommonButton>
       <CommonButton
         active={currentToolId === "line"}
         onClick={() => editor.setCurrentTool("line")}
-        tooltipContent="Line -- L"
+        tooltipContent="Line ─ L"
         side="right"
       >
         <Slash />
       </CommonButton>
       <CommonButton
-        tooltipContent="Draw -- D"
+        tooltipContent="Draw ─ D"
         active={currentToolId === "draw"}
         onClick={() => editor.setCurrentTool("draw")}
         side="right"
@@ -94,7 +94,7 @@ const LeftSidebar = () => {
 
       <CommonButton
         onClick={() => editor.setCurrentTool("text")}
-        tooltipContent="Text -- N"
+        tooltipContent="Text ─ T"
         active={currentToolId === "text"}
         side="right"
       >
@@ -103,7 +103,7 @@ const LeftSidebar = () => {
 
       <CommonButton
         onClick={() => editor.setCurrentTool("note")}
-        tooltipContent="Note -- N"
+        tooltipContent="Note ─ N"
         active={currentToolId === "note"}
         side="right"
       >
