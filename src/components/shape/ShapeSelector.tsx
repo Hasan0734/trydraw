@@ -135,6 +135,7 @@ const ShapeSelector = () => {
                   },
                 });
               }}
+              
               active={isActive}
               tooltipContent={`Shape ─ ${shape.name}`}
             >
