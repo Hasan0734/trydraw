@@ -1,8 +1,8 @@
 import { DefaultColorStyle, useEditor, useValue } from "tldraw";
-import CommonButton from "./CommonButton";
-import { PopoverContent } from "./ui/popover";
-import { Slider } from "./ui/slider";
-import { Separator } from "./ui/separator";
+import CommonButton from "../CommonButton";
+import { PopoverContent } from "../ui/popover";
+import { Slider } from "../ui/slider";
+import { Separator } from "../ui/separator";
 import { useState } from "react";
 
 const colors = [
@@ -82,7 +82,7 @@ const ColorPopover = () => {
   });
 
   return (
-    <PopoverContent className="w-37 p-1" align="start" alignOffset={-40}>
+    <PopoverContent className="w-37 p-1" align="start" alignOffset={-40} sideOffset={10}>
       <div className="grid grid-cols-4 gap-1">
         {copyColors.map((color) => {
           // @ts-ignore

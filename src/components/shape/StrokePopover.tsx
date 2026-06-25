@@ -8,7 +8,7 @@ import ShapeTextAlign from "./ShapeTextAlign";
 
 const StrokePopover = () => {
   return (
-    <PopoverContent className="p-1 w-37">
+    <PopoverContent className="p-1 w-37" sideOffset={10}>
       <div className="space-y-1">
         <ShapeFill />
         <ShapeOutline />

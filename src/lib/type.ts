@@ -1,2 +1,4 @@
 import { GeoShapeGeoStyle } from 'tldraw';
 export type GeoShapeGeoStyle = "arrow-down" | "arrow-left" | "arrow-right" | "arrow-up" | "check-box" | "cloud" | "diamond" | "ellipse" | "heart" | "hexagon" | "octagon" | "oval" | "pentagon" | "rectangle" | "rhombus-2" | "rhombus" | "star" | "trapezoid" | "triangle" | "x-box"
+
+export type ShapeDash = "draw" | "dashed" | "dotted" | "solid" | "none";

@@ -1,5 +1,5 @@
 import CommonButton from "../CommonButton";
-import { useEditor, useValue } from "tldraw";
+import { DefaultFillStyle, useEditor, useValue } from "tldraw";
 
 const fills = [
   {
@@ -37,13 +37,16 @@ const ShapeFill = () => {
           key={fill.value}
           tooltipContent={`Fill ─ ${fill.title}`}
           onClick={() => {
-            if (selectedShape)
+            if (selectedShape) {
               editor.updateShape({
                 ...selectedShape,
                 props: {
                   fill: fill.value,
                 } as any,
               });
+              return;
+            }
+            editor.setStyleForNextShapes(DefaultFillStyle, fill.value);
           }}
         >
           <div

@@ -1,17 +1,12 @@
-import { useEditor } from "tldraw";
 import CommonButton from "../CommonButton";
-import {
-  Shapes,
-  PaintBucket,
-} from "lucide-react";
+import { Shapes, PaintBucket } from "lucide-react";
 import { Popover, PopoverTrigger } from "../ui/popover";
 import ShapeSelector from "./ShapeSelector";
-import ColorPopover from "../ColorPopover";
+import ColorPopover from "./ColorPopover";
 import StrokePopover from "./StrokePopover";
 
 const ShapeStyle = () => {
-  const editor = useEditor();
-  
+
   return (
     <>
       <Popover>
@@ -25,12 +20,7 @@ const ShapeStyle = () => {
 
       <Popover>
         <PopoverTrigger>
-          <CommonButton
-            // onClick={() =>
-            //   editor.setStyleForSelectedShapes(DefaultColorStyle, "eer")
-            // }
-            tooltipContent="Color"
-          >
+          <CommonButton tooltipContent="Color">
             <PaintBucket />
           </CommonButton>
         </PopoverTrigger>
@@ -38,10 +28,7 @@ const ShapeStyle = () => {
       </Popover>
       <Popover>
         <PopoverTrigger>
-          <CommonButton
-            onClick={() => editor.setCurrentTool("select")}
-            tooltipContent="Stroke"
-          >
+          <CommonButton tooltipContent="Stroke">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

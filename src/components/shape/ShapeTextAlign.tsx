@@ -1,42 +1,174 @@
+import {
+  DefaultHorizontalAlignStyle,
+  DefaultVerticalAlignStyle,
+  useEditor,
+  useValue,
+  type TLShape,
+} from "tldraw";
 import CommonButton from "../CommonButton";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const aligns = [
   {
     title: "Label ─ Start",
-    value: "horizontal-align-start",
+    svg: "horizontal-align-start",
+    value: "start",
   },
   {
     title: "Label ─ Middle",
-    value: "horizontal-align-middle",
+    svg: "horizontal-align-middle",
+    value: "middle",
   },
   {
     title: "Label ─ End",
-    value: "horizontal-align-end",
+    svg: "horizontal-align-end",
+    value: "end",
   },
   {
     title: "Vertical align ─ Middle",
-    value: "vertical-align-middle",
+    svg: "vertical-align-middle",
+    value: "vertical-middle",
+  },
+];
+
+const verticals = [
+  {
+    title: "Vertical ─ Top",
+    svg: "vertical-align-start",
+    value: "start",
+  },
+  {
+    title: "Vertical ─ Middle",
+    svg: "vertical-align-middle",
+    value: "middle",
+  },
+  {
+    title: "Vertical ─ Bottom",
+    svg: "vertical-align-end",
+    value: "end",
   },
 ];
 
 const ShapeTextAlign = () => {
+  const editor = useEditor();
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
+
+  const handleAlign = (align: string) => {
+    if (selectedShape) {
+      editor.updateShape({
+        ...selectedShape,
+        props: {
+          align: align,
+        } as any,
+      });
+      return;
+    }
+    editor.setStyleForNextShapes(DefaultHorizontalAlignStyle, align);
+  };
+
   return (
     <div className="grid grid-cols-4 gap-1">
-      {aligns.map((align) => (
-        <CommonButton
-          key={align.value}
-          tooltipContent={`${align.title}`}
-        >
-          <div
-            className="bg-white size-4 "
-            style={{
-              mask: `url(/assets/merged.svg#${align.value}) center 100% / 100% no-repeat`,
-            }}
-          ></div>
-        </CommonButton>
-      ))}
+      {aligns.map((align) => {
+        if (align.value === "vertical-middle") {
+          const vertical =
+            verticals.find(
+              // @ts-ignore
+              (item) => item.value === selectedShape?.props.verticalAlign,
+            ) || verticals[1];
+
+          return (
+            <Popover>
+              <PopoverTrigger>
+                <CommonButton
+                  active={true}
+                  key={vertical.svg}
+                  tooltipContent={`${vertical.title}`}
+                >
+                  <div
+                    className="bg-white size-4 "
+                    style={{
+                      mask: `url(/assets/merged.svg#${vertical.svg}) center 100% / 100% no-repeat`,
+                    }}
+                  ></div>
+                </CommonButton>
+              </PopoverTrigger>
+              <VerticalAlignPopover selectedShape={selectedShape} />
+            </Popover>
+          );
+        } else {
+          const isActive = selectedShape
+            ? // @ts-ignore
+              selectedShape.props.align === align.value
+            : false;
+          return (
+            <CommonButton
+              key={align.svg}
+              tooltipContent={`${align.title}`}
+              onClick={() => handleAlign(align.value)}
+              active={isActive}
+            >
+              <div
+                className="bg-white size-4 "
+                style={{
+                  mask: `url(/assets/merged.svg#${align.svg}) center 100% / 100% no-repeat`,
+                }}
+              ></div>
+            </CommonButton>
+          );
+        }
+      })}
     </div>
   );
 };
 
 export default ShapeTextAlign;
+
+const VerticalAlignPopover = ({
+  selectedShape,
+}: {
+  selectedShape: TLShape | null;
+}) => {
+  const editor = useEditor();
+
+  const handleVertical = (align: string) => {
+    if (selectedShape) {
+      editor.updateShape({
+        ...selectedShape,
+        props: {
+          verticalAlign: align,
+        } as any,
+      });
+      return;
+    }
+    editor.setStyleForNextShapes(DefaultVerticalAlignStyle, align);
+  };
+  return (
+    <PopoverContent className="p-1 w-30" side="right" sideOffset={10}>
+      <div className="grid grid-cols-3 gap-1">
+        {verticals.map((vertical) => {
+          const isActive = selectedShape
+            ? // @ts-ignore
+              selectedShape.props.verticalAlign === vertical.value
+            : false;
+          return (
+            <CommonButton
+              key={vertical.svg}
+              tooltipContent={`${vertical.title}`}
+              onClick={() => handleVertical(vertical.value)}
+              active={isActive}
+            >
+              <div
+                className="bg-white size-4 "
+                style={{
+                  mask: `url(/assets/merged.svg#${vertical.svg}) center 100% / 100% no-repeat`,
+                }}
+              ></div>
+            </CommonButton>
+          );
+        })}
+      </div>
+    </PopoverContent>
+  );
+};

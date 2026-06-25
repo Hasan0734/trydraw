@@ -1,41 +1,72 @@
-import React from "react";
 import CommonButton from "../CommonButton";
+import { DefaultDashStyle, useEditor, useValue } from "tldraw";
+import type { ShapeDash } from "#/lib/type";
 
 const outlines = [
   {
     title: "Draw",
-    value: "dash-draw",
+    svg: "dash-draw",
+    value: "draw",
   },
   {
     title: "Dashed",
-    value: "dash-dashed",
+    svg: "dash-dashed",
+    value: "dashed",
   },
   {
     title: "Dotted",
-    value: "dash-dotted",
+    svg: "dash-dotted",
+    value: "dotted",
   },
   {
     title: "Solid",
-    value: "dash-solid",
+    svg: "dash-solid",
+    value: "solid",
   },
 ];
 
 const ShapeOutline = () => {
+  const editor = useEditor();
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
+
+  const handleOutline = (dash: ShapeDash) => {
+    if (selectedShape) {
+      editor.updateShape({
+        ...selectedShape,
+        props: {
+          dash: dash,
+        } as any,
+      });
+      return;
+    }
+    editor.setStyleForNextShapes(DefaultDashStyle, dash as ShapeDash);
+  };
+
   return (
     <div className="grid grid-cols-4 gap-1">
-      {outlines.map((outline) => (
-        <CommonButton
-          key={outline.value}
-          tooltipContent={`Dash ─ ${outline.title}`}
-        >
-          <div
-            className="bg-white size-4 "
-            style={{
-              mask: `url(/assets/merged.svg#${outline.value}) center 100% / 100% no-repeat`,
-            }}
-          ></div>
-        </CommonButton>
-      ))}
+      {outlines.map((outline) => {
+        const isActive = selectedShape
+          ? // @ts-ignore
+            selectedShape.props?.dash === outline.value
+          : false;
+        return (
+          <CommonButton
+            key={outline.value}
+            tooltipContent={`Dash ─ ${outline.title}`}
+            active={isActive}
+            onClick={() => handleOutline(outline.value as ShapeDash)}
+          >
+            <div
+              className="bg-white size-4 "
+              style={{
+                mask: `url(/assets/merged.svg#${outline.svg}) center 100% / 100% no-repeat`,
+              }}
+            ></div>
+          </CommonButton>
+        );
+      })}
     </div>
   );
 };

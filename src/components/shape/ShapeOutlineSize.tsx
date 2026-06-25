@@ -1,41 +1,71 @@
-import React from "react";
 import CommonButton from "../CommonButton";
+import { DefaultSizeStyle, useEditor, useValue } from "tldraw";
 
 const sizes = [
   {
     title: "Small",
-    value: "size-small",
+    svg: "size-small",
+    value: "s",
   },
   {
     title: "Medium",
-    value: "size-medium",
+    svg: "size-medium",
+    value: "m",
   },
   {
     title: "Large",
-    value: "size-large",
+    svg: "size-large",
+    value: "l",
   },
   {
     title: "Extra large",
-    value: "size-extra-large",
+    svg: "size-extra-large",
+    value: "xl",
   },
 ];
 
 const ShapeOutlineSize = () => {
+  const editor = useEditor();
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
+
+  const handleSize = (size: string) => {
+    if (selectedShape) {
+      editor.updateShape({
+        ...selectedShape,
+        props: {
+          size: size,
+        } as any,
+      });
+      return;
+    }
+    editor.setStyleForNextShapes(DefaultSizeStyle, size);
+  };
+
   return (
     <div className="grid grid-cols-4 gap-1">
-      {sizes.map((size) => (
-        <CommonButton
-          key={size.value}
-          tooltipContent={`Size ─ ${size.title}`}
-        >
-          <div
-            className="bg-white size-4 "
-            style={{
-              mask: `url(/assets/merged.svg#${size.value}) center 100% / 100% no-repeat`,
-            }}
-          ></div>
-        </CommonButton>
-      ))}
+      {sizes.map((size) => {
+        const isActive = selectedShape
+          ? // @ts-ignore
+            selectedShape.props.size === size.value
+          : false;
+        return (
+          <CommonButton
+            onClick={() => handleSize(size.value)}
+            key={size.svg}
+            tooltipContent={`Size ─ ${size.title}`}
+            active={isActive}
+          >
+            <div
+              className="bg-white size-4 "
+              style={{
+                mask: `url(/assets/merged.svg#${size.svg}) center 100% / 100% no-repeat`,
+              }}
+            ></div>
+          </CommonButton>
+        );
+      })}
     </div>
   );
 };
