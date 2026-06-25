@@ -1,6 +1,9 @@
 import { DefaultColorStyle, useEditor, useValue } from "tldraw";
 import CommonButton from "./CommonButton";
 import { PopoverContent } from "./ui/popover";
+import { Slider } from "./ui/slider";
+import { Separator } from "./ui/separator";
+import { useState } from "react";
 
 const colors = [
   {
@@ -62,7 +65,12 @@ const colors = [
 
 const ColorPopover = () => {
   const editor = useEditor();
-
+  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
+    editor,
+  ]);
+  const [value, setValue] = useState([
+    selectedShape ? selectedShape?.opacity : 1,
+  ]);
   const isDark = editor.user.getUserPreferences().colorScheme === "dark";
 
   const copyColors = [...colors];
@@ -73,14 +81,8 @@ const ColorPopover = () => {
     hash: isDark ? "white" : "black",
   });
 
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
-
-  console.log(selectedShape);
-
   return (
-    <PopoverContent className="w-37">
+    <PopoverContent className="w-37 p-1" align="start" alignOffset={-40}>
       <div className="grid grid-cols-4 gap-1">
         {copyColors.map((color) => {
           // @ts-ignore
@@ -115,6 +117,31 @@ const ColorPopover = () => {
             </CommonButton>
           );
         })}
+      </div>
+      <Separator />
+      <div className="px-2 mb-3 space-y-2">
+        <div className="flex justify-between text-xs">
+          <span>Opacity</span> <span>{value}</span>
+        </div>
+        <Slider
+          value={value}
+          onValueChange={(v) => {
+            setValue(v);
+
+            if (selectedShape) {
+              editor.updateShape({
+                ...selectedShape,
+                opacity: v[0],
+              });
+              return;
+            }
+            editor.setOpacityForNextShapes(v[0]);
+          }}
+          min={0.25}
+          max={1}
+          step={0.25}
+          className="mx-auto w-full max-w-xs"
+        />
       </div>
     </PopoverContent>
   );

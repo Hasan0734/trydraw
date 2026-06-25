@@ -21,7 +21,6 @@ const Whiteboard = () => {
             MainMenu: null,
             PageMenu: null,
             HelpMenu: null,
-            StylePanel: null, // Removes the default color/font panel
             ActionsMenu: null,
             MenuPanel: null,
             ZoomMenu: null,

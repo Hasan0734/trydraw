@@ -1,4 +1,4 @@
-import { PopoverContent } from "./ui/popover";
+import { PopoverContent } from "../ui/popover";
 import { GeoShapeGeoStyle, useEditor, useValue } from "tldraw";
 import {
   ArrowBigDown,
@@ -19,7 +19,7 @@ import {
   Star,
   Triangle,
 } from "lucide-react";
-import CommonButton from "./CommonButton";
+import CommonButton from "../CommonButton";
 import type { GeoShapeGeoStyle as GeoShapeType } from "#/lib/type";
 
 const shapes = [
