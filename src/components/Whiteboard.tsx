@@ -28,7 +28,7 @@ const Whiteboard = () => {
           }}
           onMount={(editor) => {
             editor.setColorMode("dark");
-            editor.updateInstanceState({ isGridMode: true });
+            // editor.updateInstanceState({ isGridMode: true });
           }}
         >
           <LeftSidebar />

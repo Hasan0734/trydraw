@@ -2,6 +2,7 @@ import {
   Circle,
   CircleSlash,
   EllipsisVertical,
+  Eraser,
   MessageSquareText,
   MousePointer2,
   MoveUpRight,
@@ -33,18 +34,30 @@ const BottomBar = () => {
     editor,
   ]);
 
+  const selectedShapes = useValue(
+    "selected-shapes",
+    () => {
+      const ids = editor.getSelectedShapeIds(); // Always safely exists
+      return ids.map((id) => editor.getShape(id)).filter(Boolean);
+    },
+    [editor],
+  );
+
+
+
   const PARENT_CLASS =
     "absolute bottom-4 left-1/2 -translate-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
 
-  console.log(selectedShape);
 
-  console.log(currentToolId, selectedShape?.typeName);
-  const access = ["arrow", "line", "geo"];
+  const access = ["arrow", "line", "geo", "text"];
+
+  console.log(selectedShapes)
+
+
   return (
     <>
       <AnimatePresence initial={false}>
-        {(access.includes(currentToolId) ||
-          selectedShape?.typeName === "shape") && (
+        {(access.includes(currentToolId) || selectedShapes.length) && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -52,6 +65,17 @@ const BottomBar = () => {
             className={cn("flex  gap-1 items-center", PARENT_CLASS)}
           >
             <ShapeStyle />
+
+
+            <CommonButton
+              active={currentToolId === "eraser"}
+              onClick={() => {
+                editor.setCurrentTool("eraser");
+              }}
+              tooltipContent="Eraser"
+            >
+              <Eraser />
+            </CommonButton>
             <Separator orientation="vertical" className="h-5!" />
             <CommonButton
               onClick={() => editor.setCurrentTool("select")}

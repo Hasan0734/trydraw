@@ -3,7 +3,8 @@ import {
   DefaultVerticalAlignStyle,
   useEditor,
   useValue,
-  type TLShape,
+  type TLGeoShape,
+  type TLTextShape,
 } from "tldraw";
 import CommonButton from "../CommonButton";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -51,9 +52,20 @@ const verticals = [
 
 const ShapeTextAlign = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+
+  const selectedShape = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      const shape = ids
+        .map((id) => editor.getShape(id))
+        .filter(Boolean)
+        .find((s) => s?.type === "text" || s?.type === "geo");
+
+      return shape;
+    },
+    [editor],
+  );
 
   const handleAlign = (align: string) => {
     if (selectedShape) {
@@ -128,7 +140,7 @@ export default ShapeTextAlign;
 const VerticalAlignPopover = ({
   selectedShape,
 }: {
-  selectedShape: TLShape | null;
+  selectedShape: TLGeoShape | TLTextShape | undefined;
 }) => {
   const editor = useEditor();
 

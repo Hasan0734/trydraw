@@ -26,18 +26,51 @@ const fonts = [
 
 const ShapeFonts = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+  const selectedShapes = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      const shape = ids.map((id) => editor.getShape(id)).filter(Boolean);
+
+      return shape;
+    },
+    [editor],
+  );
+
+  const activeFont = useValue(
+    "active-font",
+    () => {
+      if (selectedShapes.length > 0) {
+        const firstShapeFont = (selectedShapes[0] as any)?.props?.font;
+        const allMatch = selectedShapes.every(
+          (shape) => (shape as any)?.props?.font === firstShapeFont,
+        );
+
+        return allMatch ? firstShapeFont : null;
+      }
+
+      const sharedStyles = editor.getSharedStyles();
+      return sharedStyles.get(DefaultFontStyle);
+    },
+    [editor, selectedShapes],
+  );
 
   const handleFont = (font: string) => {
-    if (selectedShape) {
-      editor.updateShape({
-        ...selectedShape,
-        props: {
-          font: font,
-        } as any,
-      });
+    if (selectedShapes.length) {
+      const updates = selectedShapes
+        .map((shape) => {
+          if (!shape) return null;
+
+          const update: any = {
+            id: shape.id,
+            type: shape.type,
+            props: { ...shape.props, font: font },
+          };
+          return update;
+        })
+        .filter(Boolean);
+
+      editor.updateShapes(updates);
       return;
     }
 
@@ -46,10 +79,7 @@ const ShapeFonts = () => {
   return (
     <div className="grid grid-cols-4 gap-1">
       {fonts.map((font) => {
-        const isActive = selectedShape
-          ? // @ts-ignore
-            selectedShape.props.font === font.value
-          : false;
+        const isActive = activeFont === font.value;
         return (
           <CommonButton
             onClick={() => handleFont(font.value)}

@@ -27,18 +27,59 @@ const outlines = [
 
 const ShapeOutline = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+  const selectedShapes = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      const shape = ids.map((id) => editor.getShape(id)).filter(Boolean);
+
+      return shape;
+    },
+    [editor],
+  );
+
+  const activeOutline = useValue(
+    "active-dash",
+    () => {
+      // Filter out shapes like 'text' or 'image' that do not have a dash prop
+      const dashableShapes = selectedShapes.filter(
+        (shape) => shape && "dash" in (shape.props || {}),
+      );
+
+      if (dashableShapes.length > 0) {
+        const firstShapeOutline = (dashableShapes[0] as any)?.props?.dash;
+
+        const allMatch = dashableShapes.every(
+          (shape) => (shape as any)?.props?.dash === firstShapeOutline,
+        );
+
+        return allMatch ? firstShapeOutline : null;
+      }
+
+      const sharedStyles = editor.getSharedStyles();
+      return sharedStyles.get(DefaultDashStyle);
+    },
+    [editor, selectedShapes],
+  );
 
   const handleOutline = (dash: ShapeDash) => {
-    if (selectedShape) {
-      editor.updateShape({
-        ...selectedShape,
-        props: {
-          dash: dash,
-        } as any,
-      });
+    if (selectedShapes.length) {
+      const updates = selectedShapes
+        .map((shape) => {
+          if (!shape) return null;
+
+          if (!("dash" in (shape.props || {}))) return null;
+
+          const update: any = {
+            id: shape.id,
+            type: shape.type,
+            props: { ...shape.props, dash: dash },
+          };
+          return update;
+        })
+        .filter(Boolean);
+
+      editor.updateShapes(updates);
       return;
     }
     editor.setStyleForNextShapes(DefaultDashStyle, dash as ShapeDash);
@@ -47,10 +88,7 @@ const ShapeOutline = () => {
   return (
     <div className="grid grid-cols-4 gap-1">
       {outlines.map((outline) => {
-        const isActive = selectedShape
-          ? // @ts-ignore
-            selectedShape.props?.dash === outline.value
-          : false;
+        const isActive = activeOutline === outline.value;
         return (
           <CommonButton
             key={outline.value}

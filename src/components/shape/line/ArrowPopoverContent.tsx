@@ -64,10 +64,20 @@ const arrows = [
 
 const ArrowPopoverContent = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
 
+  const selectedShape = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      const shape = ids
+        .map((id) => editor.getShape(id))
+        .filter(Boolean)
+        .find((s) => s?.type === "arrow");
+
+      return shape;
+    },
+    [editor],
+  );
 
   const handleArrow = (type: string, arrow: string) => {
     if (!selectedShape) {

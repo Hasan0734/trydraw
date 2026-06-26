@@ -4,7 +4,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "#/components/ui/popover";
-import { LineShapeSplineStyle, useEditor, useValue } from "tldraw";
+import {
+  ArrowShapeKindStyle,
+  useEditor,
+  useValue,
+} from "tldraw";
 
 const lines = [
   {
@@ -21,13 +25,23 @@ const lines = [
 
 const LinePopover = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+  const selectedShape = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      const shape = ids
+        .map((id) => editor.getShape(id))
+        .filter(Boolean)
+        .find((s) => s?.type === "arrow");
+
+      return shape;
+    },
+    [editor],
+  );
 
   const handleLine = (line: string) => {
     if (!selectedShape) {
-      editor.setStyleForNextShapes(LineShapeSplineStyle, line);
+      editor.setStyleForNextShapes(ArrowShapeKindStyle, line);
       return;
     }
 

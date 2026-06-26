@@ -10,33 +10,35 @@ import LinePopoverContent from "./line/LinePopoverContent";
 
 const StrokePopover = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+  const selectedShapes = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+
+      return ids.map((id) => editor.getShape(id)).filter(Boolean);
+    },
+    [editor],
+  );
+
+  const currentToolId = useValue(
+    "currentToolId",
+    () => editor.getCurrentToolId(),
+    [editor],
+  );
+
+  const hasGeoShape = selectedShapes.some((s) => s?.type === "geo");
+  const hasTextShape = selectedShapes.some((s) => s?.type === "text");
 
   return (
     <PopoverContent className="p-1 w-37" sideOffset={10}>
       <div className="space-y-1">
-        <ShapeFill />
+        {(hasGeoShape || currentToolId === "geo") && <ShapeFill />}
         <ShapeOutline />
         <ShapeOutlineSize />
       </div>
-      <Separator />
-      <ShapeFonts />
-      {selectedShape?.type === "geo" && <ShapeTextAlign />}
-      {selectedShape?.type === "arrow" && (
-        <>
-          <Separator />
-          <Popover>
-            <PopoverTrigger>Line</PopoverTrigger>
-            <LinePopoverContent />
-          </Popover>
-          <Popover>
-            <PopoverTrigger>Line</PopoverTrigger>
-            <LinePopoverContent />
-          </Popover>
-        </>
-      )}
+      {(hasGeoShape || hasTextShape) && <Separator />}
+      {(hasGeoShape || hasTextShape) && <ShapeFonts />}
+      {(hasGeoShape || hasTextShape) && <ShapeTextAlign />}
     </PopoverContent>
   );
 };

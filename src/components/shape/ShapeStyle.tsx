@@ -1,32 +1,39 @@
 import CommonButton from "../CommonButton";
-import { Shapes, PaintBucket, Slash } from "lucide-react";
+import { Shapes, PaintBucket } from "lucide-react";
 import { Popover, PopoverTrigger } from "../ui/popover";
 import ShapeSelector from "./ShapeSelector";
 import ColorPopover from "./ColorPopover";
 import StrokePopover from "./StrokePopover";
 import { useEditor, useValue } from "tldraw";
-import SplinePopoverContent from "./spline/SplinePopoverContent";
-import LinePopoverContent from "./line/LinePopoverContent";
 import ArrowPopoverContent from "./line/ArrowPopoverContent";
 import LinePopover from "./line/LinePopoverContent";
+import SplinePopover from "./spline/SplinePopoverContent";
 
 const ShapeStyle = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+
 
   const currentToolId = useValue(
     "currentToolId",
     () => editor.getCurrentToolId(),
     [editor],
   );
+  const selectedShapes = useValue(
+    "selected-shapes",
+    () => {
+      const ids = editor.getSelectedShapeIds(); // Always safely exists
+      return ids.map((id) => editor.getShape(id)).filter(Boolean);
+    },
+    [editor],
+  );
 
-  console.log(selectedShape, currentToolId);
+  const hasGeoShape = selectedShapes.some((s) => s?.type === "geo");
+  const hasLine = selectedShapes.some((s) => s?.type === "line");
+  const hasArrow = selectedShapes.some((s) => s?.type === "arrow");
 
   return (
     <>
-      {(selectedShape?.type === "geo" || currentToolId === "geo") && (
+      {(hasGeoShape || currentToolId === "geo") && (
         <Popover>
           <PopoverTrigger>
             <CommonButton tooltipContent="Shape">
@@ -37,21 +44,10 @@ const ShapeStyle = () => {
         </Popover>
       )}
 
-      {(currentToolId === "arrow" || selectedShape?.type === "arrow") && (
+      {(currentToolId === "line" || hasLine) && <SplinePopover />}
+
+      {(currentToolId === "arrow" || hasArrow) && (
         <>
-          <Popover>
-            <PopoverTrigger>
-              <CommonButton tooltipContent="Spline ─ Cubic">
-                <span
-                  className="bg-white size-4 "
-                  style={{
-                    mask: `url(/assets/merged.svg#spline-cubic) center 100% / 100% no-repeat`,
-                  }}
-                ></span>
-              </CommonButton>
-            </PopoverTrigger>
-            <SplinePopoverContent />
-          </Popover>
           <LinePopover />
           <Popover>
             <PopoverTrigger>
