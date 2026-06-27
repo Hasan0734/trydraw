@@ -1,22 +1,13 @@
 import {
-  Circle,
-  CircleSlash,
+  Copy,
   EllipsisVertical,
   Eraser,
   MessageSquareText,
-  MousePointer2,
-  MoveUpRight,
-  Pen,
-  Shapes,
-  Slash,
-  Square,
-  StickyNote,
-  Type,
+  Trash,
 } from "lucide-react";
-import { GeoShapeGeoStyle, useEditor, useValue } from "tldraw";
+import { useEditor, useValue } from "tldraw";
 import CommonButton from "./CommonButton";
 import { Separator } from "./ui/separator";
-import TextStyle from "./TextStyle";
 import ShapeStyle from "./shape/ShapeStyle";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "#/lib/utils";
@@ -30,10 +21,6 @@ const BottomBar = () => {
     [editor],
   );
 
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
-
   const selectedShapes = useValue(
     "selected-shapes",
     () => {
@@ -43,16 +30,12 @@ const BottomBar = () => {
     [editor],
   );
 
-
-
   const PARENT_CLASS =
     "absolute bottom-4 left-1/2 -translate-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
 
-
   const access = ["arrow", "line", "geo", "text"];
 
-  console.log(selectedShapes)
-
+  const selectedShapesIds = editor.getSelectedShapeIds();
 
   return (
     <>
@@ -66,7 +49,6 @@ const BottomBar = () => {
           >
             <ShapeStyle />
 
-
             <CommonButton
               active={currentToolId === "eraser"}
               onClick={() => {
@@ -76,6 +58,36 @@ const BottomBar = () => {
             >
               <Eraser />
             </CommonButton>
+            {selectedShapesIds.length > 0 && (
+              <>
+                <CommonButton
+                  onClick={() => {
+                    const selectionBounds = editor.getSelectionPageBounds();
+
+                    if (selectionBounds) {
+                      const offsetX = selectionBounds.width + 15;
+                      const offsetY = 0;
+
+                      editor.duplicateShapes(selectedShapesIds, {
+                        x: offsetX,
+                        y: offsetY,
+                      });
+                    }
+                  }}
+                  tooltipContent="Duplicate"
+                >
+                  <Copy />
+                </CommonButton>
+                <CommonButton
+                  onClick={() => {
+                    editor.deleteShapes(selectedShapesIds);
+                  }}
+                  tooltipContent="Delete"
+                >
+                  <Trash />
+                </CommonButton>
+              </>
+            )}
             <Separator orientation="vertical" className="h-5!" />
             <CommonButton
               onClick={() => editor.setCurrentTool("select")}

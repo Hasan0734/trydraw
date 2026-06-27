@@ -10,7 +10,6 @@ import {
   Diamond,
   Heart,
   Hexagon,
-  type LucideIcon,
   Octagon,
   Pentagon,
   Square,
@@ -106,36 +105,49 @@ const shapes = [
 ];
 const ShapeSelector = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
+  const selectedShapes = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+      return ids.map((id) => editor.getShape(id)).filter(Boolean);
+    },
+    [editor],
+  );
 
+  const handleShape = (type: GeoShapeType) => {
+    if (selectedShapes.length) {
+      const updates = selectedShapes
+        .map((shape) => {
+          if (!shape) return null;
+          if (!("geo" in (shape.props || {}))) return null;
+
+          const update: any = {
+            id: shape.id,
+            type: "geo",
+            props: { ...shape.props, geo: type },
+          };
+          return update;
+        })
+        .filter(Boolean);
+
+      editor.updateShapes(updates);
+
+      return;
+    }
+    editor.setStyleForNextShapes(GeoShapeGeoStyle, type);
+    editor.setCurrentTool("geo");
+  };
 
   return (
     <PopoverContent className="max-w-37 p-1">
       <div className="grid grid-cols-4 gap-1">
         {shapes.map((shape) => {
           // @ts-ignore
-          const isActive = shape.type === selectedShape?.props?.geo;
+          const isActive = true;
           return (
             <CommonButton
               key={shape.name}
-              onClick={() => {
-                if (!selectedShape) {
-                  editor.setStyleForNextShapes(GeoShapeGeoStyle, shape.type);
-                  editor.setCurrentTool("geo");
-                  return;
-                }
-
-                editor.updateShape({
-                  id: selectedShape.id,
-                  type: "geo",
-                  props: {
-                    geo: shape.type as GeoShapeType,
-                  },
-                });
-              }}
-
+              onClick={() => handleShape(shape.type as GeoShapeType)}
               active={isActive}
               tooltipContent={`Shape ─ ${shape.name}`}
             >

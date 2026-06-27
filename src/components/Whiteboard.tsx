@@ -21,7 +21,7 @@ const Whiteboard = () => {
             MainMenu: null,
             PageMenu: null,
             HelpMenu: null,
-            // StylePanel: null,
+            StylePanel: null,
             ActionsMenu: null,
             MenuPanel: null,
             ZoomMenu: null,
