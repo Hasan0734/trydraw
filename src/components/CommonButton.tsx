@@ -7,14 +7,16 @@ interface CommonButtonProps {
   onClick?: () => void;
   children: React.ReactNode;
   side?: "left" | "right" | "top" | "bottom";
+  disabled?: boolean;
 }
 
 const CommonButton = ({
   active = false,
-  tooltipContent="",
+  tooltipContent = "",
   onClick,
   children,
   side,
+  disabled,
 }: CommonButtonProps) => {
   return (
     <TooltipWrapper side={side} content={tooltipContent}>
@@ -22,6 +24,7 @@ const CommonButton = ({
         variant={active ? "secondary" : "ghost"}
         onClick={onClick}
         size={"icon"}
+        disabled={disabled}
       >
         {children}
       </Button>

@@ -1,12 +1,6 @@
 import { ClientOnly } from "@tanstack/react-router";
-import {
-  DefaultColorStyle,
-  DefaultDashStyle,
-  DefaultSizeStyle,
-  Tldraw,
-} from "tldraw";
+import { Tldraw } from "tldraw";
 import "tldraw/tldraw.css";
-import WorkspaceUI from "./WorkspaceUI";
 import LeftSidebar from "./LeftSidebar";
 import { Spinner } from "./ui/spinner";
 import BottomBar from "./BottomBar";

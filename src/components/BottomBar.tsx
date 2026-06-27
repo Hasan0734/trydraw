@@ -3,7 +3,11 @@ import {
   EllipsisVertical,
   Eraser,
   MessageSquareText,
+  Minus,
+  Plus,
+  Redo,
   Trash,
+  Undo,
 } from "lucide-react";
 import { useEditor, useValue } from "tldraw";
 import CommonButton from "./CommonButton";
@@ -11,6 +15,7 @@ import { Separator } from "./ui/separator";
 import ShapeStyle from "./shape/ShapeStyle";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "#/lib/utils";
+import EditorBottomControl from "./EditorBottomControl";
 
 const BottomBar = () => {
   const editor = useEditor();
@@ -31,7 +36,7 @@ const BottomBar = () => {
   );
 
   const PARENT_CLASS =
-    "absolute bottom-4 left-1/2 -translate-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
+    "absolute bottom-4 left-1/2 -translate-x-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
 
   const access = ["arrow", "line", "geo", "text"];
 
@@ -104,18 +109,7 @@ const BottomBar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* <AnimatePresence initial={false}>
-        {selectedShape?.type === "text" && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            className={PARENT_CLASS}
-          >
-            <TextStyle />
-          </motion.div>
-        )}
-      </AnimatePresence> */}
+      <EditorBottomControl />
     </>
   );
 };
