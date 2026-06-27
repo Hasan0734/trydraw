@@ -119,6 +119,7 @@ const Pattern = ({ activeFill, handleFill }: PatternProps) => {
         <CommonButton
           key={"pattern"}
           tooltipContent={`Fill ─ ${activePattern?.title}`}
+          active={isAnyPatternActive}
         >
           <div
             className="bg-foreground size-4 "

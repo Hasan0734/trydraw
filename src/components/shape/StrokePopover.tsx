@@ -27,17 +27,18 @@ const StrokePopover = () => {
 
   const hasGeoShape = selectedShapes.some((s) => s?.type === "geo");
   const hasTextShape = selectedShapes.some((s) => s?.type === "text");
+  const hasNote = selectedShapes.some((s) => s?.type === "note");
 
   return (
     <PopoverContent className="p-1 w-37" sideOffset={10}>
       <div className="space-y-1">
         {(hasGeoShape || currentToolId === "geo") && <ShapeFill />}
-        <ShapeOutline />
+        {hasGeoShape && <ShapeOutline />}
         <ShapeOutlineSize />
       </div>
       {(hasGeoShape || hasTextShape) && <Separator />}
-      {(hasGeoShape || hasTextShape) && <ShapeFonts />}
-      {(hasGeoShape || hasTextShape) && <ShapeTextAlign />}
+      {(hasGeoShape || hasTextShape || hasNote) && <ShapeFonts />}
+      {(hasGeoShape || hasTextShape || hasNote) && <ShapeTextAlign />}
     </PopoverContent>
   );
 };
