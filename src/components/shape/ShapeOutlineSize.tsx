@@ -60,7 +60,7 @@ const ShapeOutlineSize = () => {
       const updates = selectedShapes
         .map((shape) => {
           if (!shape) return null;
-
+          if (!("size" in (shape.props || {}))) return null;
           const update: any = {
             id: shape.id,
             type: shape.type,

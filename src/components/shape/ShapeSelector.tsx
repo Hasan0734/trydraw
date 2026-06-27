@@ -135,7 +135,7 @@ const ShapeSelector = () => {
                   },
                 });
               }}
-              
+
               active={isActive}
               tooltipContent={`Shape ─ ${shape.name}`}
             >
@@ -149,17 +149,3 @@ const ShapeSelector = () => {
 };
 
 export default ShapeSelector;
-
-interface ShapeItemProps {
-  icon: LucideIcon;
-  name: string;
-  active: boolean;
-}
-
-// const ShapeItem = ({ icon: Icon, name }: ShapeItemProps) => {
-//   return (
-//     <Button className="" variant={"ghost"} size={"icon"}>
-//       <Icon />
-//     </Button>
-//   );
-// };

@@ -1,12 +1,11 @@
 import { useEditor, useValue } from "tldraw";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { PopoverContent } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import ShapeFill from "./ShapeFill";
 import ShapeFonts from "./ShapeFonts";
 import ShapeOutline from "./ShapeOutline";
 import ShapeOutlineSize from "./ShapeOutlineSize";
 import ShapeTextAlign from "./ShapeTextAlign";
-import LinePopoverContent from "./line/LinePopoverContent";
 
 const StrokePopover = () => {
   const editor = useEditor();

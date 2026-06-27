@@ -61,6 +61,8 @@ const ShapeFonts = () => {
         .map((shape) => {
           if (!shape) return null;
 
+          if (!("font" in (shape.props || {}))) return null;
+
           const update: any = {
             id: shape.id,
             type: shape.type,

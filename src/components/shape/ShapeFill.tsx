@@ -6,7 +6,6 @@ const fills = [
   { title: "None", svg: "fill-none", value: "none" },
   { title: "Semi", svg: "fill-semi", value: "semi" },
   { title: "Solid", svg: "fill-solid", value: "solid" },
-  // { title: "Pattern", svg: "fill-pattern", value: "pattern" },
 ];
 
 const patterns = [
@@ -75,8 +74,6 @@ const ShapeFill = () => {
     editor.setStyleForNextShapes(DefaultFillStyle, fill);
   };
 
-  const activePattern =  patterns[0];
-
   return (
     <div className="grid grid-cols-4 gap-1">
       {fills.map((fill) => {
@@ -97,46 +94,61 @@ const ShapeFill = () => {
           </CommonButton>
         );
       })}
-
-      <Popover>
-        <PopoverTrigger>
-          <CommonButton
-            key={"pattern"}
-            tooltipContent={`Fill ─ ${activePattern?.title}`}
-          
-          >
-            <div
-              className="bg-foreground size-4 "
-              style={{
-                mask: `url(/assets/merged.svg#${activePattern?.svg}) center 100% / 100% no-repeat`,
-              }}
-            ></div>
-          </CommonButton>
-        </PopoverTrigger>
-        <PopoverContent
-          side="right"
-          className="w-fit grid grid-cols-3 p-1"
-          sideOffset={5}
-        >
-          {patterns.map((pattern) => (
-            <CommonButton
-              key={"pattern"}
-              tooltipContent={`Fill ─ ${pattern.title}`}
-              active={activeFill === pattern.value}
-              onClick={() => handleFill(pattern.value)}
-            >
-              <div
-                className="bg-foreground size-4 "
-                style={{
-                  mask: `url(/assets/merged.svg#${pattern.svg}) center 100% / 100% no-repeat`,
-                }}
-              ></div>
-            </CommonButton>
-          ))}
-        </PopoverContent>
-      </Popover>
+      <Pattern handleFill={handleFill} activeFill={activeFill} />
     </div>
   );
 };
 
 export default ShapeFill;
+
+interface PatternProps {
+  activeFill: string;
+  handleFill: (val: string) => void;
+}
+const Pattern = ({ activeFill, handleFill }: PatternProps) => {
+  const activePattern =
+    patterns.find((p) => p.value === activeFill) ||
+    patterns.find((p) => p.value === "fill");
+
+  // 2. Determine if the trigger button should show a highlighted/active state
+  const isAnyPatternActive = patterns.some((p) => p.value === activeFill);
+
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <CommonButton
+          key={"pattern"}
+          tooltipContent={`Fill ─ ${activePattern?.title}`}
+        >
+          <div
+            className="bg-foreground size-4 "
+            style={{
+              mask: `url(/assets/merged.svg#${activePattern?.svg}) center 100% / 100% no-repeat`,
+            }}
+          ></div>
+        </CommonButton>
+      </PopoverTrigger>
+      <PopoverContent
+        side="right"
+        className="w-fit grid grid-cols-3 p-1"
+        sideOffset={5}
+      >
+        {patterns.map((pattern) => (
+          <CommonButton
+            key={"pattern"}
+            tooltipContent={`Fill ─ ${pattern.title}`}
+            active={activeFill === pattern.value}
+            onClick={() => handleFill(pattern.value)}
+          >
+            <div
+              className="bg-foreground size-4 "
+              style={{
+                mask: `url(/assets/merged.svg#${pattern.svg}) center 100% / 100% no-repeat`,
+              }}
+            ></div>
+          </CommonButton>
+        ))}
+      </PopoverContent>
+    </Popover>
+  );
+};
