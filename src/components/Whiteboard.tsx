@@ -10,35 +10,55 @@ import "tldraw/tldraw.css";
 import LeftSidebar from "./LeftSidebar";
 import { Spinner } from "./ui/spinner";
 import BottomBar from "./BottomBar";
-import { useCommentStore } from "./custom/comments/comments.store";
 import { cn } from "#/lib/utils";
-import { CanvasCommentOverlay } from "./custom/comments/CanvasCommentOverlay";
-import { CommentCursor } from "./custom/comments/CommentCursor";
 import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
+import { useCommentStore } from "./comment/comments.store";
+import { CanvasCommentOverlay } from "./comment/CanvasCommentOverlay";
+import { CommentCursor } from "./comment/CommentCursor";
 
 const Whiteboard = () => {
   const placing = useCommentStore((state) => state.placing);
-  const placed = useCommentStore((state) => state.placed);
   const setPlacing = useCommentStore((s) => s.setPlacing);
   const comments = useCommentStore((s) => s.comments);
   const [editor, setEditor] = useState<Editor | null>(null);
-  const [event, setEvent] = useState<TLBaseEventInfo | null>(null);
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   function down(e: PointerEvent) {
-  //     if (!canvasRef.current?.contains(e.target as Node)) {
-  //       console.log("Outside canvas");
 
-  //       setPlacing(false)
-  //     }
-  //   }
+  // click outside of canvas to false the placing
+  useEffect(() => {
+    function handlePointerDown(e: PointerEvent) {
+      const target = e.target as HTMLElement;
+      if (target.className !== "tl-background" && placing) {
+        useCommentStore.getState().setPlacing(false);
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+    };
+  }, [canvasRef, placing]);
 
-  //   document.addEventListener("pointerdown", down);
 
-  //   return () => document.removeEventListener("pointerdown", down);
-  // }, []);
+  // blur to hide comment cursor
+  useEffect(() => {
+    function handleBlur() {
+      setPlacing(false);
+    }
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, []);
+
+  // upate cursor
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.setCursor({
+      type: placing ? "none" : "default",
+    });
+  }, [editor, placing]);
 
   return (
     <div
@@ -58,13 +78,12 @@ const Whiteboard = () => {
             ZoomMenu: null,
             NavigationPanel: null,
           }}
-          className="cursor-none"
           onMount={(editor) => {
             setEditor(editor);
             editor.setColorMode("dark");
-            if (placing) {
-              editor.setCursor({ type: "none" });
-            }
+            // if (placing) {
+            //   editor.setCursor({ type: "none" });
+            // }
 
             editor.on("event", (info) => {
               if (info.type !== "pointer") return;
@@ -72,12 +91,8 @@ const Whiteboard = () => {
               const { placing } = useCommentStore.getState();
               if (!placing) return;
 
-              setEvent(info);
               const point = editor.inputs.getCurrentPagePoint();
-              console.log({ point });
-              console.log({ info });
               useCommentStore.getState().setPlacing(false);
-              useCommentStore.getState().setPlaced(true);
               const draft = {
                 id: nanoid(8),
                 text: "",
