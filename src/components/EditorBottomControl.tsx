@@ -15,7 +15,7 @@ const EditorBottomControl = () => {
   return (
     <div
       className={
-        "absolute bottom-4 right-5 z-1000 bg-card p-1 rounded-xl shadow-xl border flex items-center gap-1"
+        "absolute bottom-4 right-5 z-1000 bg-card p-1 rounded-xl shadow-xl border flex items-center gap-1 cursor-default"
       }
     >
       <CommonButton

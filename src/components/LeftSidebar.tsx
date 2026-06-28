@@ -1,5 +1,6 @@
 import {
   Circle,
+  MessageCircle,
   MousePointer2,
   MoveUpRight,
   Pen,
@@ -8,10 +9,14 @@ import {
   StickyNote,
   Type,
 } from "lucide-react";
-import { GeoShapeGeoStyle, useEditor, useValue } from "tldraw";
+import { GeoShapeGeoStyle, useActions, useEditor, useValue } from "tldraw";
 import CommonButton from "./CommonButton";
+import { useCommentStore } from "./custom/comments/comments.store";
 
 const LeftSidebar = () => {
+  const setPlacing = useCommentStore((s) => s.setPlacing);
+  const isPlacing = useCommentStore((s) => s.placing);
+
   const editor = useEditor();
 
   const currentToolId = useValue(
@@ -40,8 +45,14 @@ const LeftSidebar = () => {
     });
   };
 
+  const handleActivatePinTool = () => {
+    if (editor) {
+      editor.setCurrentTool("comment-pin");
+    }
+  };
+
   return (
-    <div className="absolute left-4 top-1/2 -translate-y-1/2 z-1000 flex flex-col gap-1 bg-card p-1 rounded-xl shadow-xl border">
+    <div className="absolute cursor-default left-4 top-1/2 -translate-y-1/2 z-1000 flex flex-col gap-1 bg-card p-1 rounded-xl shadow-xl border">
       <CommonButton
         active={currentToolId === "select"}
         onClick={() => editor.setCurrentTool("select")}
@@ -108,6 +119,17 @@ const LeftSidebar = () => {
         side="right"
       >
         <StickyNote />
+      </CommonButton>
+      <CommonButton
+        active={isPlacing}
+        onClick={() => {
+          setPlacing(true);
+          editor.setCursor({ type: "none" });
+        }}
+        tooltipContent="Comment"
+        side="right"
+      >
+        <MessageCircle />
       </CommonButton>
     </div>
   );

@@ -36,12 +36,13 @@ const BottomBar = () => {
   );
 
   const PARENT_CLASS =
-    "absolute bottom-4 left-1/2 -translate-x-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border";
+    "absolute bottom-4 left-1/2 -translate-x-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border cursor-default";
 
   const access = ["arrow", "line", "geo", "text"];
 
   const selectedShapesIds = editor.getSelectedShapeIds();
 
+  console.log(selectedShapes)
   return (
     <>
       <AnimatePresence initial={false}>
