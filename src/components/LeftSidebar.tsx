@@ -28,7 +28,6 @@ const LeftSidebar = () => {
   const isPlacing = useCommentStore((s) => s.placing);
 
   const editor = useEditor();
-  const trackEvent = useUiEvents();
 
   const currentToolId = useValue(
     "currentToolId",
@@ -41,20 +40,6 @@ const LeftSidebar = () => {
     () => editor.getStyleForNextShape(GeoShapeGeoStyle),
     [editor],
   );
-
-  const selectRectangle = () => {
-    editor.run(() => {
-      editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
-      editor.setCurrentTool("geo");
-    });
-  };
-  const selectFrame = () => {
-    editor.run(() => {
-      // editor.setStyleForNextShapes(, "frame");
-      editor.setCurrentTool("frame");
-    });
-  };
-
 
   const handleUploadClick = () => {
     if (!editor) return;
@@ -115,12 +100,170 @@ const LeftSidebar = () => {
     input.click();
   };
 
+  const handleDoubleClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    toolId: string,
+  ) => {
+    e.stopPropagation();
+
+    if (toolId === "rectangle") {
+      editor.run(() => {
+        editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
+        editor.setCurrentTool("geo");
+      });
+      editor.updateInstanceState({ isToolLocked: true });
+      return;
+    }
+
+    editor.setCurrentTool(toolId);
+    editor.updateInstanceState({ isToolLocked: true });
+
+    // OPTIONAL: If you ALSO meant locking the currently selected canvas shape:
+    // editor.toggleLock()
+  };
+
+  const tools = [
+    {
+      title: "Select ─ V",
+      isActive: currentToolId === "select",
+      onClick: () => {
+        editor.setCurrentTool("select");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      icon: MousePointer2,
+    },
+    {
+      title: "Hand ─ H",
+      isActive: currentToolId === "hand",
+      onClick: () => {
+        editor.setCurrentTool("hand");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      icon: Hand,
+    },
+
+    {
+      title: "Rectangle ─ R",
+      isActive: currentToolId === "geo" && currentGeoStyle === "rectangle",
+      onClick: () => {
+        editor.run(() => {
+          editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
+          editor.setCurrentTool("geo");
+        });
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "rectangle");
+        console.log("rectangle");
+      },
+      icon: Square,
+    },
+    {
+      title: "Frame ─ F",
+      isActive: currentToolId === "frame",
+      onClick: () => {
+        editor.setCurrentTool("frame");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "frame");
+      },
+      icon: Scan,
+    },
+    {
+      title: "Image ─ ⌘U",
+      onClick: handleUploadClick,
+      icon: ImageIcon,
+    },
+    {
+      title: "Arrow ─ A",
+      isActive: currentToolId === "arrow",
+      onClick: () => {
+        editor.setCurrentTool("arrow");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "arrow");
+      },
+      icon: MoveUpRight,
+    },
+    {
+      title: "Line ─ L",
+      isActive: currentToolId === "line",
+      onClick: () => {
+        editor.setCurrentTool("line");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "line");
+      },
+      icon: Slash,
+    },
+    {
+      title: "Draw ─ D",
+      isActive: currentToolId === "draw",
+      onClick: () => {
+        editor.setCurrentTool("draw");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "draw");
+      },
+      icon: Pen,
+    },
+    {
+      title: "Text ─ T",
+      isActive: currentToolId === "text",
+      onClick: () => {
+        editor.setCurrentTool("text");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "text");
+      },
+      icon: Type,
+    },
+    {
+      title: "Note ─ N",
+      isActive: currentToolId === "note",
+      onClick: () => {
+        editor.setCurrentTool("note");
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleDoubleClick(e, "note");
+      },
+      icon: StickyNote,
+    },
+    {
+      title: "Comment ─ C",
+      isActive: isPlacing,
+      onClick: () => {
+        setPlacing(true);
+        editor.setCursor({ type: "none" });
+        editor.updateInstanceState({ isToolLocked: false });
+      },
+      icon: MessageCircle,
+    },
+  ];
   return (
     <div
       id="left-sidebar"
       className="left-sidebar absolute cursor-default left-4 top-1/2 -translate-y-1/2 z-1000 flex flex-col gap-1 bg-card p-1 rounded-xl shadow-xl border"
     >
-      <CommonButton
+      {tools.map((tool) => (
+        <CommonButton
+          active={tool?.isActive}
+          onClick={tool.onClick}
+          side={"right"}
+          tooltipContent={tool.title}
+          onDoubleClick={tool?.doubleClick}
+        >
+          <tool.icon />
+        </CommonButton>
+      ))}
+
+      {/* <CommonButton
         active={currentToolId === "select"}
         onClick={() => editor.setCurrentTool("select")}
         side={"right"}
@@ -146,7 +289,7 @@ const LeftSidebar = () => {
         <Square />
       </CommonButton>
       <CommonButton
-        active={currentToolId === "geo" && currentGeoStyle === "rectangle"}
+        active={currentToolId === "frame"}
         onClick={selectFrame}
         side={"right"}
         tooltipContent="Frame ─ F"
@@ -154,14 +297,14 @@ const LeftSidebar = () => {
         <Scan />
       </CommonButton>
 
-      {/* <CommonButton
+      <CommonButton
         active={currentToolId === "geo" && currentGeoStyle === "ellipse"}
         onClick={selectEllipse}
         side={"right"}
         tooltipContent="Ellipse ─ E"
       >
         <Circle />
-      </CommonButton> */}
+      </CommonButton>
 
       <CommonButton
         onClick={handleUploadClick}
@@ -222,7 +365,7 @@ const LeftSidebar = () => {
         side="right"
       >
         <MessageCircle />
-      </CommonButton>
+      </CommonButton> */}
     </div>
   );
 };

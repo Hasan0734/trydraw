@@ -4,6 +4,7 @@ import {
   DefaultContextMenu,
   DefaultImageToolbar,
   Editor,
+  FrameShapeUtil,
   NoteShapeUtil,
   Tldraw,
   type TLComponents,
@@ -19,7 +20,12 @@ import { useCommentStore } from "./comment/comments.store";
 import { CanvasCommentOverlay } from "./comment/CanvasCommentOverlay";
 import { CommentCursor } from "./comment/CommentCursor";
 
-const shapeUtils = [NoteShapeUtil.configure({ resizeMode: "scale" })];
+const ConfiguredFrameShapeUtil = FrameShapeUtil.configure({ showColors: true });
+
+const shapeUtils = [
+  NoteShapeUtil.configure({ resizeMode: "scale" }),
+  ConfiguredFrameShapeUtil,
+];
 const components: TLComponents = {
   ContextMenu: DefaultContextMenu,
   Toolbar: null,
@@ -103,10 +109,6 @@ const Whiteboard = () => {
     });
   }, []);
 
-
-
-  console.log(placing, editor)
-
   return (
     <div
       ref={canvasRef}
@@ -117,6 +119,9 @@ const Whiteboard = () => {
           shapeUtils={shapeUtils}
           components={components}
           onMount={(editor) => {
+            editor.user.updateUserPreferences({
+              isSnapMode: true,
+            });
             setEditor(editor);
             editor.setColorMode("dark");
 

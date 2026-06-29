@@ -12,7 +12,6 @@ import SplinePopover from "./spline/SplinePopoverContent";
 const ShapeStyle = () => {
   const editor = useEditor();
 
-
   const currentToolId = useValue(
     "currentToolId",
     () => editor.getCurrentToolId(),
@@ -31,20 +30,9 @@ const ShapeStyle = () => {
   const hasLine = selectedShapes.some((s) => s?.type === "line");
   const hasArrow = selectedShapes.some((s) => s?.type === "arrow");
 
-
-
   return (
     <>
-      {(hasGeoShape || currentToolId === "geo") && (
-        <Popover>
-          <PopoverTrigger>
-            <CommonButton tooltipContent="Shape">
-              <Shapes />
-            </CommonButton>
-          </PopoverTrigger>
-          <ShapeSelector />
-        </Popover>
-      )}
+      {(hasGeoShape || currentToolId === "geo") && <ShapeSelector />}
 
       {(currentToolId === "line" || hasLine) && <SplinePopover />}
 
