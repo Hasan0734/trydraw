@@ -208,7 +208,6 @@ const VerticalAlign = ({
 
   const isAnyPatternActive = verticals.some((p) => p.value === activeAlign);
 
-  console.log(activeVerticalAlign);
   return (
     <Popover>
       <PopoverTrigger>

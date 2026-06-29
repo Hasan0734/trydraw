@@ -1,9 +1,6 @@
 import { DefaultColorStyle, useEditor, useValue } from "tldraw";
 import CommonButton from "../CommonButton";
 import { PopoverContent } from "../ui/popover";
-import { Slider } from "../ui/slider";
-import { Separator } from "../ui/separator";
-import { useState } from "react";
 
 const colors = [
   {
@@ -65,12 +62,40 @@ const colors = [
 
 const ColorPopover = () => {
   const editor = useEditor();
-  const selectedShape = useValue("shape", () => editor.getOnlySelectedShape(), [
-    editor,
-  ]);
-  const [value, setValue] = useState([
-    selectedShape ? selectedShape?.opacity : 1,
-  ]);
+  const selectedShapes = useValue(
+    "selected-shape",
+    () => {
+      const ids = editor.getSelectedShapeIds();
+
+      return ids.map((id) => editor.getShape(id)).filter(Boolean);
+    },
+    [editor],
+  );
+
+  const activeColor = useValue(
+    "active-color",
+    () => {
+      // Filter out shapes like 'text' or 'image' that do not have a dash prop
+      const dashableShapes = selectedShapes.filter(
+        (shape) => shape && "color" in (shape.props || {}),
+      );
+
+      if (dashableShapes.length > 0) {
+        const firstShapeColor = (dashableShapes[0] as any)?.props?.color;
+
+        const allMatch = dashableShapes.every(
+          (shape) => (shape as any)?.props?.color === firstShapeColor,
+        );
+
+        return allMatch ? firstShapeColor : null;
+      }
+
+      const sharedStyles = editor.getSharedStyles();
+      return sharedStyles.get(DefaultColorStyle);
+    },
+    [editor, selectedShapes],
+  );
+
   const isDark = editor.user.getUserPreferences().colorScheme === "dark";
 
   const copyColors = [...colors];
@@ -81,34 +106,49 @@ const ColorPopover = () => {
     hash: isDark ? "white" : "black",
   });
 
+  const handleColor = (color: string) => {
+    if (!selectedShapes.length) {
+      editor.setStyleForNextShapes(DefaultColorStyle, color);
+      return;
+    }
+
+    const updates = selectedShapes
+      .map((shape) => {
+        if (!shape) return null;
+        if (!("color" in (shape.props || {}))) return null;
+
+        const update: any = {
+          id: shape.id,
+          type: shape.type,
+          props: {
+            ...shape.props,
+            color,
+          },
+        };
+        return update;
+      })
+      .filter(Boolean);
+    editor.updateShapes(updates);
+  };
+
   return (
-    <PopoverContent className="w-37 p-1" align="start" alignOffset={-40} sideOffset={10}>
+    <PopoverContent
+      className="w-37 p-1"
+      align="start"
+      alignOffset={-40}
+      sideOffset={10}
+    >
       <div className="grid grid-cols-4 gap-1">
         {copyColors.map((color) => {
           // @ts-ignore
-          const isActive = selectedShape?.props?.color === color.value;
+          const isActive = activeColor === color.value;
 
           return (
             <CommonButton
               active={isActive}
               key={color.name}
               tooltipContent={`Color ─ ${color.name}`}
-              onClick={() => {
-                if (!selectedShape) {
-                  editor.setStyleForNextShapes(DefaultColorStyle, color.value);
-
-                  return;
-                }
-
-                editor.updateShape({
-                  ...selectedShape,
-                  props: {
-                    ...selectedShape.props,
-                    // @ts-ignore
-                    color: color.value,
-                  },
-                });
-              }}
+              onClick={() => handleColor(color.value)}
             >
               <span
                 className="size-4 rounded-full"
@@ -117,31 +157,6 @@ const ColorPopover = () => {
             </CommonButton>
           );
         })}
-      </div>
-      <Separator />
-      <div className="px-2 mb-3 space-y-2">
-        <div className="flex justify-between text-xs">
-          <span>Opacity</span> <span>{value}</span>
-        </div>
-        <Slider
-          value={value}
-          onValueChange={(v) => {
-            setValue(v);
-
-            if (selectedShape) {
-              editor.updateShape({
-                ...selectedShape,
-                opacity: v[0],
-              });
-              return;
-            }
-            editor.setOpacityForNextShapes(v[0]);
-          }}
-          min={0.25}
-          max={1}
-          step={0.25}
-          className="mx-auto w-full max-w-xs"
-        />
       </div>
     </PopoverContent>
   );

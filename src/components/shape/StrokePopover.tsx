@@ -6,6 +6,7 @@ import ShapeFonts from "./ShapeFonts";
 import ShapeOutline from "./ShapeOutline";
 import ShapeOutlineSize from "./ShapeOutlineSize";
 import ShapeTextAlign from "./ShapeTextAlign";
+import ShapeOpacity from "./ShapeOpacity";
 
 const StrokePopover = () => {
   const editor = useEditor();
@@ -30,14 +31,16 @@ const StrokePopover = () => {
   const hasNote = selectedShapes.some((s) => s?.type === "note");
   const hasDraw = selectedShapes.some((s) => s?.type === "draw");
 
-
   return (
     <PopoverContent className="p-1 w-37" sideOffset={10}>
       <div className="space-y-1">
         {(hasGeoShape || currentToolId === "geo" || hasDraw) && <ShapeFill />}
-        {hasGeoShape || hasDraw && <ShapeOutline />}
+        {(hasGeoShape || hasDraw) && <ShapeOutline />}
         <ShapeOutlineSize />
       </div>
+      <Separator />
+      <ShapeOpacity />
+
       {(hasGeoShape || hasTextShape) && <Separator />}
       {(hasGeoShape || hasTextShape || hasNote) && <ShapeFonts />}
       {(hasGeoShape || hasTextShape || hasNote) && <ShapeTextAlign />}
