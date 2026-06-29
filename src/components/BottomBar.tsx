@@ -31,12 +31,13 @@ const BottomBar = () => {
   const access = ["arrow", "line", "geo", "text", "draw"];
 
   const selectedShapesIds = editor.getSelectedShapeIds();
+  const hasImage = selectedShapes.some((s) => s?.type === "image");
 
   console.log(selectedShapes);
   return (
     <>
       <AnimatePresence initial={false}>
-        {(access.includes(currentToolId) || selectedShapes.length) && (
+        {(access.includes(currentToolId) || selectedShapes.length && !hasImage) && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

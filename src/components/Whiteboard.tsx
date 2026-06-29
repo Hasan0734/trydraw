@@ -1,17 +1,35 @@
 import { ClientOnly } from "@tanstack/react-router";
 import {
+  AssetRecordType,
+  DefaultImageToolbar,
   Editor,
+  NoteShapeUtil,
   Tldraw,
+  type TLComponents,
+  type TLEditorComponents,
 } from "tldraw";
 import "tldraw/tldraw.css";
 import LeftSidebar from "./LeftSidebar";
 import { Spinner } from "./ui/spinner";
 import BottomBar from "./BottomBar";
 import { cn } from "#/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useCommentStore } from "./comment/comments.store";
 import { CanvasCommentOverlay } from "./comment/CanvasCommentOverlay";
 import { CommentCursor } from "./comment/CommentCursor";
+
+const shapeUtils = [NoteShapeUtil.configure({ resizeMode: "scale" })];
+const components: TLComponents = {
+  Toolbar: null,
+  MainMenu: null,
+  PageMenu: null,
+  HelpMenu: null,
+  StylePanel: null,
+  ActionsMenu: null,
+  MenuPanel: null,
+  ZoomMenu: null,
+  NavigationPanel: null,
+};
 
 const Whiteboard = () => {
   const placing = useCommentStore((state) => state.placing);
@@ -54,6 +72,35 @@ const Whiteboard = () => {
     });
   }, [editor, placing]);
 
+  const handleMount = useCallback((editor: Editor) => {
+    // 1. Create and store the asset metadata
+    const assetId = AssetRecordType.createId();
+    editor.createAssets([
+      {
+        id: assetId,
+        type: "image",
+        typeName: "asset",
+        props: {
+          name: "image.png",
+          src: "https://example.com",
+          w: 300,
+          h: 200,
+          mimeType: "image/png",
+          isAnimated: false,
+        },
+        meta: {},
+      },
+    ]);
+
+    // 2. Create the shape linked to the asset
+    editor.createShape({
+      type: "image",
+      x: 100,
+      y: 100,
+      props: { assetId, w: 300, h: 200 },
+    });
+  }, []);
+
   return (
     <div
       ref={canvasRef}
@@ -61,17 +108,8 @@ const Whiteboard = () => {
     >
       <ClientOnly fallback={<Loading />}>
         <Tldraw
-          components={{
-            Toolbar: null,
-            MainMenu: null,
-            PageMenu: null,
-            HelpMenu: null,
-            StylePanel: null,
-            ActionsMenu: null,
-            MenuPanel: null,
-            ZoomMenu: null,
-            NavigationPanel: null,
-          }}
+          shapeUtils={shapeUtils}
+          components={components}
           onMount={(editor) => {
             setEditor(editor);
             editor.setColorMode("dark");

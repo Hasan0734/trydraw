@@ -75,7 +75,6 @@ const ColorPopover = () => {
   const activeColor = useValue(
     "active-color",
     () => {
-      // Filter out shapes like 'text' or 'image' that do not have a dash prop
       const dashableShapes = selectedShapes.filter(
         (shape) => shape && "color" in (shape.props || {}),
       );

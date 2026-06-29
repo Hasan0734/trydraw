@@ -41,7 +41,6 @@ const ShapeOutline = () => {
   const activeOutline = useValue(
     "active-dash",
     () => {
-      // Filter out shapes like 'text' or 'image' that do not have a dash prop
       const dashableShapes = selectedShapes.filter(
         (shape) => shape && "dash" in (shape.props || {}),
       );
