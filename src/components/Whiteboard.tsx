@@ -1,6 +1,7 @@
 import { ClientOnly } from "@tanstack/react-router";
 import {
   AssetRecordType,
+  DefaultContextMenu,
   DefaultImageToolbar,
   Editor,
   NoteShapeUtil,
@@ -20,6 +21,7 @@ import { CommentCursor } from "./comment/CommentCursor";
 
 const shapeUtils = [NoteShapeUtil.configure({ resizeMode: "scale" })];
 const components: TLComponents = {
+  ContextMenu: DefaultContextMenu,
   Toolbar: null,
   MainMenu: null,
   PageMenu: null,
@@ -101,6 +103,10 @@ const Whiteboard = () => {
     });
   }, []);
 
+
+
+  console.log(placing, editor)
+
   return (
     <div
       ref={canvasRef}
@@ -126,7 +132,7 @@ const Whiteboard = () => {
               editor.setCursor({ type: "default" });
             });
 
-            editor.updateInstanceState({ isGridMode: true });
+            // editor.updateInstanceState({ isGridMode: true });
           }}
         >
           <LeftSidebar />
