@@ -4,7 +4,7 @@ import { CommentPin } from "./CommentPin";
 
 
 export function CanvasCommentOverlay({ editor }: { editor: Editor }) {
-  const comments = useCommentStore((s) => s.comments);
+  const comments = useCommentStore((s) => s.threads);
 
   // Re-render whenever camera changes
   useValue("camera", () => editor.getCamera(), [editor]);

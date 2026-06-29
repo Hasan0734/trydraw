@@ -1,6 +1,6 @@
 import { useEditor } from "tldraw";
-import { useCommentStore } from "./comments.store";
-import { useEffect, useRef } from "react";
+import { useCommentStore, type CommentThread } from "./comments.store";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "#/components/ui/button";
 import { Ellipsis, MessageCircle } from "lucide-react";
 import {
@@ -11,22 +11,23 @@ import {
 
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
+import ThreadAction from "./ThreadAction";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface Props {
-  comment: {
-    id: string;
-    pagePoint: {
-      x: number;
-      y: number;
-    };
-  };
+  comment: CommentThread;
 }
 
 export function CommentPin({ comment }: Props) {
   const editor = useEditor();
   const screen = editor.pageToScreen(comment?.pagePoint);
+  const [isOpen, setIsOpen] = useState(true);
 
-  const updateCommentPosition = useCommentStore((s) => s.updateCommentPosition);
+  const updateCommentPosition = useCommentStore((s) => s.updateThreadPosition);
+  const deletePinComment = useCommentStore((s) => s.deleteThread);
+  const setPlacing = useCommentStore((s) => s.setPlacing);
+  const [editing, setEditing] = useState<string | null>(null);
+  const resolveThread = useCommentStore((s) => s.resolveThread);
 
   const draggingRef = useRef<{
     id: string;
@@ -62,6 +63,23 @@ export function CommentPin({ comment }: Props) {
     };
   }, [editor, updateCommentPosition]);
 
+  useEffect(() => {
+    if (!comment.messages[0].text) {
+      setIsOpen(true);
+    }
+  }, [comment.messages.length]);
+
+  useEffect(() => {
+    if (!isOpen && !comment.messages[0].text) {
+      deletePinComment(comment.id);
+      setPlacing(false);
+    }
+  }, [isOpen, comment.messages[0].text]);
+
+  const handleResolve = (threadId: string) => {
+    resolveThread(threadId);
+  };
+
   return (
     <div
       className="absolute pointer-events-auto"
@@ -71,7 +89,7 @@ export function CommentPin({ comment }: Props) {
         transform: "translate(-50%, -50%)",
       }}
     >
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen} modal={true}>
         <PopoverTrigger asChild>
           <Button
             size={"icon"}
@@ -95,16 +113,43 @@ export function CommentPin({ comment }: Props) {
             <MessageCircle />
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="relative">
-          <div className="absolute right-1 top-1">
-            <Button variant={"ghost"} size={"icon-xs"} className="">
-              <Ellipsis />
-            </Button>
-          </div>
-          <CommentItem />
-          <CommentItem />
+        <PopoverContent align="start" className="relative gap-0">
+          {comment.messages[0]?.text && (
+            <div className="absolute right-0 top-0">
+              <ThreadAction
+                handleResolve={handleResolve}
+                resolved={comment.resolved}
+                threadId={comment.id}
+              />
+            </div>
+          )}
 
-          <CommentForm />
+          <ScrollArea className=" *:data-radix-scroll-area-viewport:max-h-50 overflow-y-auto scrollbar-none!">
+            {comment.messages[0]?.text &&
+              comment.messages.map((message) => (
+                <CommentItem
+                  key={message.id}
+                  message={message}
+                  editing={editing}
+                  setEditing={setEditing}
+                  threadId={comment.id}
+                />
+              ))}
+          </ScrollArea>
+
+          {!editing && !comment.resolved && <CommentForm comment={comment} />}
+
+          {comment.resolved && (
+            <div className="pl-7">
+              <Button
+                onClick={() => handleResolve(comment.id)}
+                variant={"secondary"}
+                size="xs"
+              >
+                Re-Open Thread
+              </Button>
+            </div>
+          )}
         </PopoverContent>
       </Popover>
     </div>

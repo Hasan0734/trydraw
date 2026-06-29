@@ -5,7 +5,7 @@ export function CommentCursor({editor}: {editor:Editor}) {
 
   const point = useValue(
     "pointer",
-    () => editor.inputs.currentScreenPoint,
+    () => editor.inputs.getCurrentPagePoint(),
     [editor]
   );
 

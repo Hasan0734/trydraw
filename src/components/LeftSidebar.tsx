@@ -1,5 +1,6 @@
 import {
   Circle,
+  Hand,
   MessageCircle,
   MousePointer2,
   MoveUpRight,
@@ -55,6 +56,14 @@ const LeftSidebar = () => {
         tooltipContent="Select ─ S"
       >
         <MousePointer2 />
+      </CommonButton>
+       <CommonButton
+        active={currentToolId === "hand"}
+        onClick={() => editor.setCurrentTool("hand")}
+        side={"right"}
+        tooltipContent="Select ─ S"
+      >
+        <Hand />
       </CommonButton>
 
       <CommonButton

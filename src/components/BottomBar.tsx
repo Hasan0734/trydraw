@@ -1,14 +1,4 @@
-import {
-  Copy,
-  EllipsisVertical,
-  Eraser,
-  MessageSquareText,
-  Minus,
-  Plus,
-  Redo,
-  Trash,
-  Undo,
-} from "lucide-react";
+import { Copy, EllipsisVertical, Eraser, Trash } from "lucide-react";
 import { useEditor, useValue } from "tldraw";
 import CommonButton from "./CommonButton";
 import { Separator } from "./ui/separator";
@@ -38,11 +28,11 @@ const BottomBar = () => {
   const PARENT_CLASS =
     "absolute bottom-4 left-1/2 -translate-x-1/2 z-1000 bg-card p-1 rounded-xl shadow-xl border cursor-default";
 
-  const access = ["arrow", "line", "geo", "text"];
+  const access = ["arrow", "line", "geo", "text", "draw"];
 
   const selectedShapesIds = editor.getSelectedShapeIds();
 
-  console.log(selectedShapes)
+  console.log(selectedShapes);
   return (
     <>
       <AnimatePresence initial={false}>
@@ -64,6 +54,8 @@ const BottomBar = () => {
             >
               <Eraser />
             </CommonButton>
+
+            <Separator orientation="vertical" className="h-5!" />
             {selectedShapesIds.length > 0 && (
               <>
                 <CommonButton
@@ -94,13 +86,12 @@ const BottomBar = () => {
                 </CommonButton>
               </>
             )}
-            <Separator orientation="vertical" className="h-5!" />
-            <CommonButton
+            {/* <CommonButton
               onClick={() => editor.setCurrentTool("select")}
               tooltipContent="Comment"
             >
               <MessageSquareText />
-            </CommonButton>
+            </CommonButton> */}
             <CommonButton
               onClick={() => editor.setCurrentTool("select")}
               tooltipContent="Comment"

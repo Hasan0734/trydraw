@@ -32,6 +32,7 @@ const ShapeStyle = () => {
   const hasArrow = selectedShapes.some((s) => s?.type === "arrow");
 
 
+
   return (
     <>
       {(hasGeoShape || currentToolId === "geo") && (

@@ -2,9 +2,6 @@ import { ClientOnly } from "@tanstack/react-router";
 import {
   Editor,
   Tldraw,
-  type TLBaseEventInfo,
-  type TLEventHandlers,
-  type TLEventInfo,
 } from "tldraw";
 import "tldraw/tldraw.css";
 import LeftSidebar from "./LeftSidebar";
@@ -12,7 +9,6 @@ import { Spinner } from "./ui/spinner";
 import BottomBar from "./BottomBar";
 import { cn } from "#/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { nanoid } from "nanoid";
 import { useCommentStore } from "./comment/comments.store";
 import { CanvasCommentOverlay } from "./comment/CanvasCommentOverlay";
 import { CommentCursor } from "./comment/CommentCursor";
@@ -20,10 +16,9 @@ import { CommentCursor } from "./comment/CommentCursor";
 const Whiteboard = () => {
   const placing = useCommentStore((state) => state.placing);
   const setPlacing = useCommentStore((s) => s.setPlacing);
-  const comments = useCommentStore((s) => s.comments);
+  const comments = useCommentStore((s) => s.threads);
   const [editor, setEditor] = useState<Editor | null>(null);
   const canvasRef = useRef<HTMLDivElement | null>(null);
-
 
   // click outside of canvas to false the placing
   useEffect(() => {
@@ -38,7 +33,6 @@ const Whiteboard = () => {
       document.removeEventListener("pointerdown", handlePointerDown, true);
     };
   }, [canvasRef, placing]);
-
 
   // blur to hide comment cursor
   useEffect(() => {
@@ -81,9 +75,6 @@ const Whiteboard = () => {
           onMount={(editor) => {
             setEditor(editor);
             editor.setColorMode("dark");
-            // if (placing) {
-            //   editor.setCursor({ type: "none" });
-            // }
 
             editor.on("event", (info) => {
               if (info.type !== "pointer") return;
@@ -93,13 +84,7 @@ const Whiteboard = () => {
 
               const point = editor.inputs.getCurrentPagePoint();
               useCommentStore.getState().setPlacing(false);
-              const draft = {
-                id: nanoid(8),
-                text: "",
-                pagePoint: point,
-              };
-              useCommentStore.getState().addComment(draft);
-
+              useCommentStore.getState().createThread(point, "", "Jahid Hasan");
               editor.setCursor({ type: "default" });
             });
 
