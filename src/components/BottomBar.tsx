@@ -6,6 +6,7 @@ import ShapeStyle from "./shape/ShapeStyle";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "#/lib/utils";
 import EditorBottomControl from "./EditorBottomControl";
+import BottomActionMenu from "./BottomActionMenu";
 
 const BottomBar = () => {
   const editor = useEditor();
@@ -93,12 +94,7 @@ const BottomBar = () => {
             >
               <MessageSquareText />
             </CommonButton> */}
-            <CommonButton
-              onClick={() => editor.setCurrentTool("select")}
-              tooltipContent="Comment"
-            >
-              <EllipsisVertical />
-            </CommonButton>
+           <BottomActionMenu/>
           </motion.div>
         )}
       </AnimatePresence>

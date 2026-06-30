@@ -3,6 +3,8 @@ import {
   AssetRecordType,
   DefaultContextMenu,
   DefaultImageToolbar,
+  DefaultMainMenu,
+  DefaultPageMenu,
   Editor,
   FrameShapeUtil,
   NoteShapeUtil,
@@ -24,19 +26,19 @@ const ConfiguredFrameShapeUtil = FrameShapeUtil.configure({ showColors: true });
 
 const shapeUtils = [
   NoteShapeUtil.configure({ resizeMode: "scale" }),
-  ConfiguredFrameShapeUtil,
+  ConfiguredFrameShapeUtil
 ];
 const components: TLComponents = {
-  ContextMenu: DefaultContextMenu,
-  Toolbar: null,
-  MainMenu: null,
-  PageMenu: null,
-  HelpMenu: null,
-  StylePanel: null,
-  ActionsMenu: null,
-  MenuPanel: null,
-  ZoomMenu: null,
-  NavigationPanel: null,
+  // ContextMenu: DefaultContextMenu,
+  // Toolbar: null,
+  // MainMenu: DefaultMainMenu,
+  // PageMenu: DefaultPageMenu,
+  // HelpMenu: null,
+  // StylePanel: null,
+  // ActionsMenu: null,
+  // MenuPanel: null,
+  // ZoomMenu: null,
+  // NavigationPanel: null,
 };
 
 const Whiteboard = () => {
@@ -80,45 +82,20 @@ const Whiteboard = () => {
     });
   }, [editor, placing]);
 
-  const handleMount = useCallback((editor: Editor) => {
-    // 1. Create and store the asset metadata
-    const assetId = AssetRecordType.createId();
-    editor.createAssets([
-      {
-        id: assetId,
-        type: "image",
-        typeName: "asset",
-        props: {
-          name: "image.png",
-          src: "https://example.com",
-          w: 300,
-          h: 200,
-          mimeType: "image/png",
-          isAnimated: false,
-        },
-        meta: {},
-      },
-    ]);
 
-    // 2. Create the shape linked to the asset
-    editor.createShape({
-      type: "image",
-      x: 100,
-      y: 100,
-      props: { assetId, w: 300, h: 200 },
-    });
-  }, []);
 
   return (
     <div
       ref={canvasRef}
-      className={cn("relative h-screen w-screen cursor-pointer!")}
+      className={cn("relative h-screen w-screen")}
     >
       <ClientOnly fallback={<Loading />}>
         <Tldraw
+        hideUi
           shapeUtils={shapeUtils}
-          components={components}
+          // components={components}
           onMount={(editor) => {
+            
             editor.user.updateUserPreferences({
               isSnapMode: true,
             });
@@ -160,7 +137,7 @@ const Loading = () => {
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <div>
-        <Spinner className="size-10" />
+        <Spinner className="size-6" />
       </div>
     </div>
   );

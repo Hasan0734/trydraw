@@ -44,6 +44,8 @@ const LeftSidebar = () => {
   const handleUploadClick = () => {
     if (!editor) return;
 
+    editor.setCurrentTool("select");
+
     // Standard HTML file input creation on-the-fly
     const input = document.createElement("input");
     input.type = "file";
@@ -105,6 +107,7 @@ const LeftSidebar = () => {
     toolId: string,
   ) => {
     e.stopPropagation();
+    editor.cancel();
 
     if (toolId === "rectangle") {
       editor.run(() => {
@@ -122,13 +125,18 @@ const LeftSidebar = () => {
     // editor.toggleLock()
   };
 
+  const onSelect = (toolId: string) => {
+    editor.cancel();
+    editor.setCurrentTool(toolId);
+    editor.updateInstanceState({ isToolLocked: false });
+  };
+
   const tools = [
     {
       title: "Select ─ V",
       isActive: currentToolId === "select",
       onClick: () => {
-        editor.setCurrentTool("select");
-        editor.updateInstanceState({ isToolLocked: false });
+        onSelect("select");
       },
       icon: MousePointer2,
     },
@@ -136,8 +144,7 @@ const LeftSidebar = () => {
       title: "Hand ─ H",
       isActive: currentToolId === "hand",
       onClick: () => {
-        editor.setCurrentTool("hand");
-        editor.updateInstanceState({ isToolLocked: false });
+        onSelect("hand");
       },
       icon: Hand,
     },
@@ -146,6 +153,7 @@ const LeftSidebar = () => {
       title: "Rectangle ─ R",
       isActive: currentToolId === "geo" && currentGeoStyle === "rectangle",
       onClick: () => {
+        editor.cancel();
         editor.run(() => {
           editor.setStyleForNextShapes(GeoShapeGeoStyle, "rectangle");
           editor.setCurrentTool("geo");
@@ -154,7 +162,6 @@ const LeftSidebar = () => {
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "rectangle");
-        console.log("rectangle");
       },
       icon: Square,
     },
@@ -162,6 +169,7 @@ const LeftSidebar = () => {
       title: "Frame ─ F",
       isActive: currentToolId === "frame",
       onClick: () => {
+        editor.cancel();
         editor.setCurrentTool("frame");
         editor.updateInstanceState({ isToolLocked: false });
       },
@@ -179,8 +187,7 @@ const LeftSidebar = () => {
       title: "Arrow ─ A",
       isActive: currentToolId === "arrow",
       onClick: () => {
-        editor.setCurrentTool("arrow");
-        editor.updateInstanceState({ isToolLocked: false });
+        onSelect("arrow")
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "arrow");
@@ -191,8 +198,7 @@ const LeftSidebar = () => {
       title: "Line ─ L",
       isActive: currentToolId === "line",
       onClick: () => {
-        editor.setCurrentTool("line");
-        editor.updateInstanceState({ isToolLocked: false });
+        onSelect("line")
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "line");
@@ -203,8 +209,7 @@ const LeftSidebar = () => {
       title: "Draw ─ D",
       isActive: currentToolId === "draw",
       onClick: () => {
-        editor.setCurrentTool("draw");
-        editor.updateInstanceState({ isToolLocked: false });
+       onSelect("draw")
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "draw");
@@ -215,8 +220,7 @@ const LeftSidebar = () => {
       title: "Text ─ T",
       isActive: currentToolId === "text",
       onClick: () => {
-        editor.setCurrentTool("text");
-        editor.updateInstanceState({ isToolLocked: false });
+        onSelect("text")
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "text");
@@ -227,8 +231,7 @@ const LeftSidebar = () => {
       title: "Note ─ N",
       isActive: currentToolId === "note",
       onClick: () => {
-        editor.setCurrentTool("note");
-        editor.updateInstanceState({ isToolLocked: false });
+       onSelect("note")
       },
       doubleClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleDoubleClick(e, "note");
@@ -239,6 +242,7 @@ const LeftSidebar = () => {
       title: "Comment ─ C",
       isActive: isPlacing,
       onClick: () => {
+        editor.cancel()
         setPlacing(true);
         editor.setCursor({ type: "none" });
         editor.updateInstanceState({ isToolLocked: false });
